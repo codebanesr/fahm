@@ -9,22 +9,12 @@ import { CompletionService } from './completion.service';
 import { ResumeRequestDTO } from './dto/resume-request.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
-import {
-  ApiBody,
-  ApiConsumes,
-  ApiOperation,
-  ApiResponse,
-} from '@nestjs/swagger';
+import { ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { FileParserDto } from './dto/payload.dto';
 
-@Controller('resume')
+@Controller('extract')
 export class CompletionController {
   constructor(private readonly completionService: CompletionService) {}
-  @Post('text')
-  public async postResume(@Body() body: ResumeRequestDTO) {
-    const { resumeText } = body;
-    const extractedInfo = await this.completionService.parseResume(resumeText);
-    return extractedInfo;
-  }
 
   @Post('test')
   public async testSampling(@Body() body: ResumeRequestDTO) {
@@ -33,44 +23,31 @@ export class CompletionController {
   }
 
   @Post('file')
-  @ApiOperation({ summary: 'Parse file and return text' })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        file: {
-          type: 'string',
-          format: 'binary',
-        },
-      },
-    },
+  @ApiOperation({
+    summary:
+      'Parse doc, xlsx and other file types (not pdf) and extract feature',
   })
+  @ApiConsumes('multipart/form-data')
   @ApiResponse({ status: 200, type: String })
   @UseInterceptors(FileInterceptor('file', { preservePath: true }))
-  async parseFile(@UploadedFile() file: Express.Multer.File): Promise<string> {
+  async parseFile(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body: FileParserDto,
+  ): Promise<string> {
     const resumeText = await this.completionService.getFileText(file);
-    return this.completionService.parseResume(resumeText);
+    return this.completionService.parseResume(resumeText, body.payload);
   }
 
   @Post('pdf')
-  @ApiOperation({ summary: 'Parse pdf file and return text' })
+  @ApiOperation({ summary: 'Parse pdf file and extract feature' })
   @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        file: {
-          type: 'string',
-          format: 'binary',
-        },
-      },
-    },
-  })
   @ApiResponse({ status: 200, type: String })
   @UseInterceptors(FileInterceptor('file', { preservePath: true }))
-  async parsePdfFile(@UploadedFile() file: Express.Multer.File) {
+  async parsePdfFile(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body: FileParserDto,
+  ) {
     const resumeText = await this.completionService.getPdfText(file);
-    return this.completionService.parseResume(resumeText);
+    return this.completionService.parseResume(resumeText, body.payload);
   }
 }

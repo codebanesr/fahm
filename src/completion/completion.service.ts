@@ -3,6 +3,8 @@ import axios from 'axios';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
 import { CompletionServiceSelector } from 'llms-client';
+import * as extract from 'pdf-text-extract';
+import { promisify } from 'util';
 
 @Injectable()
 export class CompletionService {
@@ -22,6 +24,17 @@ export class CompletionService {
 
     const result = await axios.request(config);
     return result.data;
+  }
+
+  async getPdfText(file: Express.Multer.File) {
+    const extractPromise = promisify(extract);
+    try {
+      const textArray = await extractPromise(file.path, { splitPages: false });
+      const text = textArray.join(' ');
+      return text.replace(/[^\w\s.,/\\-]|_/g, '');
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   completion = new CompletionServiceSelector({

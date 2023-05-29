@@ -52,4 +52,25 @@ export class CompletionController {
     const resumeText = await this.completionService.getFileText(file);
     return this.completionService.parseResume(resumeText);
   }
+
+  @Post('pdf')
+  @ApiOperation({ summary: 'Parse pdf file and return text' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 200, type: String })
+  @UseInterceptors(FileInterceptor('file', { preservePath: true }))
+  async parsePdfFile(@UploadedFile() file: Express.Multer.File) {
+    const resumeText = await this.completionService.getPdfText(file);
+    return this.completionService.parseResume(resumeText);
+  }
 }

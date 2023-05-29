@@ -1,6 +1,9 @@
 # Stage 1: Build the application
 FROM node:14-alpine AS build
 
+# Install poppler-utils for pdf reader
+RUN apk update && apk add poppler-utils
+
 WORKDIR /app
 
 COPY package*.json ./

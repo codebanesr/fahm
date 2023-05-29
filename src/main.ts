@@ -7,7 +7,7 @@ async function bootstrap() {
 
   // Create a Swagger document
   const options = new DocumentBuilder()
-    .setTitle('Your App Title')
+    .setTitle('HR Management System')
     .setDescription('Your app description')
     .setVersion('1.0')
     .build();

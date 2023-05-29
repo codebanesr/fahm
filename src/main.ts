@@ -7,8 +7,8 @@ async function bootstrap() {
 
   // Create a Swagger document
   const options = new DocumentBuilder()
-    .setTitle('HR Management System')
-    .setDescription('Your app description')
+    .setTitle('Feature Extraction System')
+    .setDescription('Enables extracting features from widely used file formats')
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, options);

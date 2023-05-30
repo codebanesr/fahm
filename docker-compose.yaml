@@ -11,10 +11,10 @@ services:
       - .env
     restart: always
   nginx:
-    image: nginx:latest
+    image: jlenartjwp/jwt-nginx
     container_name: nginx
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
       - 80:80
     restart: always

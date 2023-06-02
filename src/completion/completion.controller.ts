@@ -16,11 +16,11 @@ import { FileParserDto } from './dto/payload.dto';
 export class CompletionController {
   constructor(private readonly completionService: CompletionService) {}
 
-  @Post('test')
-  public async testSampling(@Body() body: ResumeRequestDTO) {
-    const { resumeText } = body;
-    return this.completionService.completeResponse(resumeText);
-  }
+  // @Post('test')
+  // public async testSampling(@Body() body: ResumeRequestDTO) {
+  //   const { resumeText } = body;
+  //   return this.completionService.completeResponse(resumeText);
+  // }
 
   @Post('file')
   @ApiOperation({

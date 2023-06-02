@@ -42,7 +42,7 @@ export class CompletionService {
     baseurl: 'https://api.openai.com',
     type: 'chatGPT',
     model: 'gpt-3.5-turbo',
-    timeout: 40 * 1000,
+    timeout: 60 * 1000,
   });
 
   async completeResponse(text: string) {

@@ -22,8 +22,10 @@
   "dependencies": {
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
+    "@nestjs/jwt": "^10.0.3",
     "@nestjs/platform-express": "^9.4.2",
     "@nestjs/swagger": "^6.3.0",
+    "@supabase/supabase-js": "^2.24.0",
     "@types/multer": "^1.4.7",
     "axios": "^1.4.0",
     "class-validator": "^0.14.0",

@@ -5,23 +5,20 @@ import { PineconeStore } from 'langchain/vectorstores/pinecone';
 import { PDFLoader } from 'langchain/document_loaders/fs/pdf';
 import { DirectoryLoader } from 'langchain/document_loaders/fs/directory';
 import { PineconeService } from 'src/pinecone/pinecone.service';
+import { CreateIndexDTO } from './dto/create-index.dto';
 
 @Injectable()
 export class DocumentIngestionService {
   constructor(private readonly pineconeService: PineconeService) {}
   private logger = new Logger(DocumentIngestionService.name);
 
-  async run(options: {
-    filePath: string;
-    pineconeIndexName: string;
-    pineconeNamespace: string;
-  }): Promise<void> {
+  async run(options: CreateIndexDTO) {
     try {
       const pinecone = await this.pineconeService.getPineconeClient();
-      const { filePath, pineconeIndexName, pineconeNamespace } = options;
+      const { directoryPath, pineconeIndexName, pineconeNamespace } = options;
 
       /*load raw docs from all files in the directory */
-      const directoryLoader = new DirectoryLoader(filePath, {
+      const directoryLoader = new DirectoryLoader(directoryPath, {
         '.pdf': (path) => new PDFLoader(path),
       });
 
@@ -49,6 +46,8 @@ export class DocumentIngestionService {
       });
 
       this.logger.log('ingestion complete');
+
+      return { success: true };
     } catch (error) {
       this.logger.error('Failed to ingest your data', error);
       throw new Error('Failed to ingest your data');

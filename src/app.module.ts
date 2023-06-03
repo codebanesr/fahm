@@ -9,6 +9,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { SupabaseService } from './supabase/supabase.service';
 import { DocumentIngestionService } from './document-ingestion/document-ingestion.service';
 import { PineconeService } from './pinecone/pinecone.service';
+import { DocumentIngestionController } from './document-ingestion/document-ingestion.controller';
+import { DocumentIngestionModule } from './document-ingestion/document-ingestion.module';
 
 @Module({
   imports: [
@@ -20,8 +22,9 @@ import { PineconeService } from './pinecone/pinecone.service';
       signOptions: { expiresIn: '24d' }, // Set the token expiration time
     }),
     AuthModule,
+    DocumentIngestionModule,
   ],
   controllers: [AppController, CompletionController],
-  providers: [AppService, CompletionService, SupabaseService, DocumentIngestionService, PineconeService],
+  providers: [AppService, CompletionService, SupabaseService, PineconeService],
 })
 export class AppModule {}

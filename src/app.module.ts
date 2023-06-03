@@ -9,6 +9,7 @@ import { CompletionService } from './completion/completion.service';
 import { PineconeAdapterService } from './db-utils/pinecone-adapter/pinecone-adapter.service';
 import { DocumentIngestionModule } from './document-ingestion/document-ingestion.module';
 import { SupabaseService } from './supabase/supabase.service';
+import { VectorAdapterProvider } from './db-utils/vector-db-factory/vector-db.provider';
 
 @Module({
   imports: [
@@ -27,7 +28,7 @@ import { SupabaseService } from './supabase/supabase.service';
     AppService,
     CompletionService,
     SupabaseService,
-    PineconeAdapterService,
+    VectorAdapterProvider,
   ],
 })
 export class AppModule {}

@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PineconeClient } from '@pinecone-database/pinecone';
-import { PineconeStore } from 'langchain/vectorstores/pinecone';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
+import { PineconeStore } from 'langchain/vectorstores/pinecone';
 import {
   EmbedDocumentsOptions,
   VectorDBClient,
@@ -14,10 +14,17 @@ export class PineconeAdapterService implements VectorDBClient {
 
   constructor(apiKey: string, environment: string) {
     this.client = new PineconeClient();
-    this.client.init({
-      apiKey,
-      environment,
-    });
+    this.client
+      .init({
+        apiKey,
+        environment,
+      })
+      .then((data) => {
+        this.logger.log('initialized pinecone client', data);
+      })
+      .catch((error) => {
+        this.logger.error('Failed to initialize pinecone client', error);
+      });
   }
 
   async embedDocuments({

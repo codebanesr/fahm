@@ -10,7 +10,10 @@ export const VectorAdapterProvider: Provider<VectorDBClient> = {
     if (vectorDb === 'qdrant') {
       return new QdrantAdapterService();
     } else if (vectorDb === 'pinecone') {
-      return new PineconeAdapterService('apikey', 'environment');
+      return new PineconeAdapterService(
+        process.env.PINECONE_API_KEY,
+        process.env.PINECONE_ENVIRONMENT,
+      );
     }
     throw new Error(`Invalid VECTOR_DB value: ${vectorDb}`);
   },

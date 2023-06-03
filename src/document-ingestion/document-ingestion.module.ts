@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
+import { VectorDBModule } from 'src/db-utils/vector-db.module';
 import { DocumentIngestionController } from './document-ingestion.controller';
 import { DocumentIngestionService } from './document-ingestion.service';
-import { VectorAdapterProvider } from 'src/db-utils/vector-db-factory/vector-db.provider';
 
 @Module({
   controllers: [DocumentIngestionController],
   exports: [],
-  imports: [],
-  providers: [DocumentIngestionService, VectorAdapterProvider],
+  imports: [VectorDBModule],
+  providers: [DocumentIngestionService],
 })
 export class DocumentIngestionModule {}

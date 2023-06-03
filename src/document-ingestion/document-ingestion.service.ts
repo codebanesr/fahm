@@ -1,13 +1,15 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { DirectoryLoader } from 'langchain/document_loaders/fs/directory';
 import { PDFLoader } from 'langchain/document_loaders/fs/pdf';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
-import { PineconeAdapterService } from 'src/db-utils/pinecone-adapter/pinecone-adapter.service';
+import { VectorDBClient } from 'src/db-utils/vector-db-client.interface';
 import { CreateIndexDTO } from './dto/create-index.dto';
 
 @Injectable()
 export class DocumentIngestionService {
-  constructor(private readonly pineconeService: PineconeAdapterService) {}
+  constructor(
+    @Inject('VECTOR_DB_CLIENT') private readonly vectorDbClient: VectorDBClient,
+  ) {}
   private logger = new Logger(DocumentIngestionService.name);
 
   async run(options: CreateIndexDTO) {
@@ -32,7 +34,7 @@ export class DocumentIngestionService {
 
       this.logger.log('creating vector store...');
 
-      this.pineconeService.embedDocuments({
+      this.vectorDbClient.embedDocuments({
         docs,
         vectorIndexName: pineconeIndexName,
         vectorNamespace: pineconeNamespace,

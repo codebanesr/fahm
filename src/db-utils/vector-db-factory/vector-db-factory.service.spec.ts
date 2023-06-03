@@ -1,15 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { VectorDbFactoryService } from './vector-db.provider';
+import { VectorDBClient } from '../vector-db-client.interface';
+import { VectorAdapterProvider } from './vector-db.provider';
 
-describe('VectorDbFactoryService', () => {
-  let service: VectorDbFactoryService;
+describe('VectorDBClient', () => {
+  let service: VectorDBClient;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [VectorDbFactoryService],
+      providers: [VectorAdapterProvider],
     }).compile();
 
-    service = module.get<VectorDbFactoryService>(VectorDbFactoryService);
+    service = module.get<VectorDBClient>(VectorDBClient);
   });
 
   it('should be defined', () => {

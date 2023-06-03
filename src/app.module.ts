@@ -7,6 +7,8 @@ import { MulterModule } from '@nestjs/platform-express';
 import { AuthModule } from './api-token/api-token.module';
 import { JwtModule } from '@nestjs/jwt';
 import { SupabaseService } from './supabase/supabase.service';
+import { DocumentIngestionService } from './document-ingestion/document-ingestion.service';
+import { PineconeService } from './pinecone/pinecone.service';
 
 @Module({
   imports: [
@@ -20,6 +22,6 @@ import { SupabaseService } from './supabase/supabase.service';
     AuthModule,
   ],
   controllers: [AppController, CompletionController],
-  providers: [AppService, CompletionService, SupabaseService],
+  providers: [AppService, CompletionService, SupabaseService, DocumentIngestionService, PineconeService],
 })
 export class AppModule {}

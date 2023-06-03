@@ -6,10 +6,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CompletionController } from './completion/completion.controller';
 import { CompletionService } from './completion/completion.service';
-import { PineconeAdapterService } from './db-utils/pinecone-adapter/pinecone-adapter.service';
 import { DocumentIngestionModule } from './document-ingestion/document-ingestion.module';
 import { SupabaseService } from './supabase/supabase.service';
-import { VectorAdapterProvider } from './db-utils/vector-db-factory/vector-db.provider';
 
 @Module({
   imports: [
@@ -24,11 +22,6 @@ import { VectorAdapterProvider } from './db-utils/vector-db-factory/vector-db.pr
     DocumentIngestionModule,
   ],
   controllers: [AppController, CompletionController],
-  providers: [
-    AppService,
-    CompletionService,
-    SupabaseService,
-    VectorAdapterProvider,
-  ],
+  providers: [AppService, CompletionService, SupabaseService],
 })
 export class AppModule {}

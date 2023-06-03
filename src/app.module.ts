@@ -1,16 +1,14 @@
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
+import { MulterModule } from '@nestjs/platform-express';
+import { AuthModule } from './api-token/api-token.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CompletionController } from './completion/completion.controller';
 import { CompletionService } from './completion/completion.service';
-import { MulterModule } from '@nestjs/platform-express';
-import { AuthModule } from './api-token/api-token.module';
-import { JwtModule } from '@nestjs/jwt';
-import { SupabaseService } from './supabase/supabase.service';
-import { DocumentIngestionService } from './document-ingestion/document-ingestion.service';
-import { PineconeService } from './pinecone/pinecone.service';
-import { DocumentIngestionController } from './document-ingestion/document-ingestion.controller';
+import { PineconeAdapterService } from './db-utils/pinecone-adapter/pinecone-adapter.service';
 import { DocumentIngestionModule } from './document-ingestion/document-ingestion.module';
+import { SupabaseService } from './supabase/supabase.service';
 
 @Module({
   imports: [
@@ -25,6 +23,11 @@ import { DocumentIngestionModule } from './document-ingestion/document-ingestion
     DocumentIngestionModule,
   ],
   controllers: [AppController, CompletionController],
-  providers: [AppService, CompletionService, SupabaseService, PineconeService],
+  providers: [
+    AppService,
+    CompletionService,
+    SupabaseService,
+    PineconeAdapterService,
+  ],
 })
 export class AppModule {}

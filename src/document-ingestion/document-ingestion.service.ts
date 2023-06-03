@@ -1,20 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
-import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
-import { PineconeStore } from 'langchain/vectorstores/pinecone';
-import { PDFLoader } from 'langchain/document_loaders/fs/pdf';
 import { DirectoryLoader } from 'langchain/document_loaders/fs/directory';
-import { PineconeService } from 'src/pinecone/pinecone.service';
+import { PDFLoader } from 'langchain/document_loaders/fs/pdf';
+import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
+import { PineconeAdapterService } from 'src/db-utils/pinecone-adapter/pinecone-adapter.service';
 import { CreateIndexDTO } from './dto/create-index.dto';
 
 @Injectable()
 export class DocumentIngestionService {
-  constructor(private readonly pineconeService: PineconeService) {}
+  constructor(private readonly pineconeService: PineconeAdapterService) {}
   private logger = new Logger(DocumentIngestionService.name);
 
   async run(options: CreateIndexDTO) {
     try {
-      const pinecone = await this.pineconeService.getPineconeClient();
       const { directoryPath, pineconeIndexName, pineconeNamespace } = options;
 
       /*load raw docs from all files in the directory */
@@ -34,15 +31,11 @@ export class DocumentIngestionService {
       this.logger.log('split docs', docs);
 
       this.logger.log('creating vector store...');
-      /*create and store the embeddings in the vectorStore*/
-      const embeddings = new OpenAIEmbeddings();
-      const index = pinecone.Index(pineconeIndexName);
 
-      //embed the PDF documents
-      await PineconeStore.fromDocuments(docs, embeddings, {
-        pineconeIndex: index,
-        namespace: pineconeNamespace,
-        textKey: 'text',
+      this.pineconeService.embedDocuments({
+        docs,
+        vectorIndexName: pineconeIndexName,
+        vectorNamespace: pineconeNamespace,
       });
 
       this.logger.log('ingestion complete');

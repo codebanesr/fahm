@@ -26,6 +26,7 @@
     "@nestjs/platform-express": "^9.4.2",
     "@nestjs/swagger": "^6.3.0",
     "@pinecone-database/pinecone": "^0.1.6",
+    "@qdrant/qdrant-js": "^1.2.2",
     "@supabase/supabase-js": "^2.24.0",
     "@types/multer": "^1.4.7",
     "axios": "^1.4.0",

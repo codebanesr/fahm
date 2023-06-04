@@ -1,5 +1,5 @@
 import { Provider } from '@nestjs/common';
-import { QdrantAdapterService } from '../qdrant-adapter.service.ts/qdrant-adapter.service.ts.service';
+import { QdrantAdapterService } from '../qdrant-adapter.service.ts/qdrant-adapter.service';
 import { PineconeAdapterService } from '../pinecone-adapter/pinecone-adapter.service';
 import { VectorDBClient } from '../vector-db-client.interface';
 

@@ -33,7 +33,7 @@ Multi-Tenant Architecture: Our SaaS system is designed with a multi-tenant archi
 By incorporating these requirements, our SaaS system will facilitate efficient ingestion of reference data, seamless user document upload, and secure multi-tenant functionality. This will empower our users to leverage the reference data and their own uploaded documents for various search and analysis purposes."
 
 ---
-Solution in mind
+## Solution in mind
 ---
 To achieve the functionality you described while using Pinecone, you can follow these steps:
 

@@ -50,3 +50,75 @@ To achieve the functionality you described while using Pinecone, you can follow 
 6. Multi-Tenant Access: Pinecone supports concurrent access from multiple users through its API. Users can interact with the system independently, querying and retrieving results based on their own uploaded documents and the reference data.
 
 By following these steps and leveraging Pinecone's features such as namespaces, ingestion API, and search API, you can implement the desired functionality within your SaaS system. Remember to refer to the Pinecone documentation for detailed information on how to use the specific APIs and features provided by Pinecone.
+
+
+---
+
+Pseudo code for the above implementation
+Certainly! Here's the commented code with explanations of vectors and ids:
+
+```typescript
+import Pinecone from 'pinecone-client';
+
+// Initialize Pinecone client
+const pinecone = new Pinecone({ apiKey: 'YOUR_API_KEY' });
+
+// Namespaces
+const referenceDataNamespace = 'reference_data';
+
+// Ingest reference data
+async function ingestReferenceData(vectors: number[][], ids: string[]) {
+  await pinecone.upsert(referenceDataNamespace, vectors, ids);
+}
+
+// User Document Upload
+async function uploadUserDocument(userId: string, vectors: number[][], ids: string[]) {
+  const userNamespace = `user_${userId}_documents`;
+  await pinecone.upsert(userNamespace, vectors, ids);
+}
+
+// Perform Similarity Search
+async function performSimilaritySearch(queryVector: number[], namespaces: string[]) {
+  const searchResults = await pinecone.query(namespaces, queryVector);
+  return searchResults;
+}
+
+// Example Usage
+async function main() {
+  // Ingest reference data
+  const referenceDataVectors = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+  const referenceDataIds = ['ref1', 'ref2', 'ref3'];
+  await ingestReferenceData(referenceDataVectors, referenceDataIds);
+
+  // Upload user document
+  const userVectors = [[2, 3, 4], [5, 6, 7]];
+  const userId = 'user1';
+  const userDocumentIds = ['doc1', 'doc2'];
+  await uploadUserDocument(userId, userVectors, userDocumentIds);
+
+  // Perform similarity search
+  const queryVector = [3, 4, 5];
+  const namespaces = [referenceDataNamespace, `user_${userId}_documents`];
+  const searchResults = await performSimilaritySearch(queryVector, namespaces);
+  console.log('Search Results:', searchResults);
+}
+
+// Run the example
+main().catch(console.error);
+```
+
+Explanation:
+
+- `vectors` represent the numerical representations or embeddings of your data points. In the code, `referenceDataVectors` and `userVectors` hold the vectors for the reference data and the user documents, respectively. Each vector is an array of numbers that captures the characteristics of the corresponding data point.
+
+- `ids` are unique identifiers associated with each data point. In the code, `referenceDataIds` and `userDocumentIds` hold the IDs for the reference data and the user documents, respectively. IDs can be any string that uniquely identifies each data point.
+
+- In the `ingestReferenceData` function, the `upsert` method is used to ingest the reference data vectors into the `reference_data` namespace along with their corresponding IDs.
+
+- In the `uploadUserDocument` function, the `upsert` method is used to upload the user document vectors into a dynamically created namespace specific to each user (`user_X_documents`) along with their corresponding IDs.
+
+- In the `performSimilaritySearch` function, the `query` method is used to perform a similarity search. The `queryVector` represents the vector of the query point, and `namespaces` specify the namespaces to search within.
+
+- In the example usage (`main` function), we ingest reference data, upload user documents, and perform a similarity search. The search results are printed to the console.
+
+Remember to replace `'YOUR_API_KEY'` with your actual Pinecone API key.

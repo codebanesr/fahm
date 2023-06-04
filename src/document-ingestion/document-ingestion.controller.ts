@@ -10,7 +10,6 @@ import { ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { FileParserDto } from 'src/completion/dto/payload.dto';
 import { DocumentIngestionService } from './document-ingestion.service';
 import { CreateIndexDTO } from './dto/create-index.dto';
-import { PDFLoader } from 'langchain/document_loaders/fs/pdf';
 
 @Controller('document-ingestion')
 export class DocumentIngestionController {
@@ -22,7 +21,9 @@ export class DocumentIngestionController {
   }
 
   @Post('pdf')
-  @ApiOperation({ summary: 'Parse pdf file and extract feature' })
+  @ApiOperation({
+    summary: 'Ingests pdf data to vector database for querying later',
+  })
   @ApiConsumes('multipart/form-data')
   @ApiResponse({ status: 200, type: String })
   @UseInterceptors(FileInterceptor('file', { preservePath: true }))
@@ -30,6 +31,6 @@ export class DocumentIngestionController {
     @UploadedFile() file: Express.Multer.File,
     @Body() body: FileParserDto,
   ) {
-    this.documentIngestionService.ingestUserDocuments(file, body);
+    return this.documentIngestionService.ingestUserDocuments(file, body);
   }
 }

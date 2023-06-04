@@ -4,6 +4,7 @@ import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { PineconeStore } from 'langchain/vectorstores/pinecone';
 import {
   EmbedDocumentsOptions,
+  RemoveDocumentsByIdOptions,
   VectorDBClient,
 } from '../vector-db-client.interface';
 
@@ -42,11 +43,30 @@ export class PineconeAdapterService implements VectorDBClient {
     });
   }
 
+  async addDocumentsToIndex({ docs, vectorNamespace }: EmbedDocumentsOptions) {
+    const embeddings = new OpenAIEmbeddings();
+    const pineconeIndex = this.client.Index(process.env.PINECONE_INDEX);
+    const store = await PineconeStore.fromExistingIndex(embeddings, {
+      pineconeIndex,
+      namespace: vectorNamespace,
+    });
+
+    await store.addDocuments(docs);
+  }
   async delete(indexName: string): Promise<void> {
     await this.client.deleteIndex({ indexName });
   }
 
   async describeIndexStats(indexName: string): Promise<any> {
     return this.client.describeIndex({ indexName });
+  }
+
+  async removeDocumentsById({
+    ids,
+    indexName,
+    namespace,
+  }: RemoveDocumentsByIdOptions) {
+    const index = this.client.Index(indexName);
+    await index.delete1({ ids, namespace });
   }
 }

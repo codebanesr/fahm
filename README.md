@@ -55,7 +55,6 @@ By following these steps and leveraging Pinecone's features such as namespaces, 
 ---
 
 Pseudo code for the above implementation
-Certainly! Here's the commented code with explanations of vectors and ids:
 
 ```typescript
 import Pinecone from 'pinecone-client';

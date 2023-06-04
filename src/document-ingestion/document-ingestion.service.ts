@@ -57,32 +57,17 @@ export class DocumentIngestionService {
     const textSplitter = new RecursiveCharacterTextSplitter({
       chunkSize: 1000,
       chunkOverlap: 200,
-      keepSeparator: false,
-      separators: [
-        '.',
-        ',',
-        ';',
-        ':',
-        '!',
-        '?',
-        '—',
-        '“',
-        '”',
-        '‘',
-        '’',
-        '"',
-        "'",
-        '-',
-        '\n',
-      ],
     });
 
     const docs = await textSplitter.splitDocuments(rawDocs);
 
-    this.vectorDbClient.embedDocuments({
+    await this.vectorDbClient.addDocumentsToIndex({
       docs,
       vectorIndexName: process.env.PINECONE_INDEX_NAME,
       vectorNamespace: 'shanur',
+      id: file.originalname,
     });
+
+    return true;
   }
 }

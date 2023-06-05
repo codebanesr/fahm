@@ -1,6 +1,8 @@
 import { Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiTokenService } from './api-token.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('api-token')
 @Controller('api-token')
 export class AuthController {
   constructor(private apiTokenService: ApiTokenService) {}

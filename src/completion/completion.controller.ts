@@ -5,13 +5,17 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { CompletionService } from './completion.service';
-import { ResumeRequestDTO } from './dto/resume-request.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Express } from 'express';
-import { ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiConsumes,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { CompletionService } from './completion.service';
 import { FileParserDto } from './dto/payload.dto';
 
+@ApiTags('extract')
 @Controller('extract')
 export class CompletionController {
   constructor(private readonly completionService: CompletionService) {}

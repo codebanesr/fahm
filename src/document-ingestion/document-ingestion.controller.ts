@@ -6,11 +6,17 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiConsumes,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { FileParserDto } from 'src/completion/dto/payload.dto';
 import { DocumentIngestionService } from './document-ingestion.service';
 import { CreateIndexDTO } from './dto/create-index.dto';
 
+@ApiTags('document-ingestion')
 @Controller('document-ingestion')
 export class DocumentIngestionController {
   constructor(private documentIngestionService: DocumentIngestionService) {}
@@ -22,7 +28,8 @@ export class DocumentIngestionController {
 
   @Post('pdf')
   @ApiOperation({
-    summary: 'Ingests pdf data to vector database for querying later',
+    summary:
+      "Ingests user's pdf document to vector database for querying later, this will be stored in a separate namespace and will be used for querying only for that user",
   })
   @ApiConsumes('multipart/form-data')
   @ApiResponse({ status: 200, type: String })

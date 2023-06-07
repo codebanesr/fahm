@@ -129,6 +129,7 @@ export default function Home() {
       {!user && <Landing />}
       {user && (
         <Layout>
+
           <div className="mx-auto flex flex-col gap-4">
             <h1 className="text-2xl font-bold leading-[1.1] tracking-tighter text-center">
               IPC Companion: Engage in Conversations Rooted in Law

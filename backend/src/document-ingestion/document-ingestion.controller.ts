@@ -15,6 +15,7 @@ import {
 import { FileParserDto } from 'src/completion/dto/payload.dto';
 import { DocumentIngestionService } from './document-ingestion.service';
 import { CreateIndexDTO } from './dto/create-index.dto';
+import { DocumentIngestionDto } from 'src/completion/dto';
 
 @ApiTags('document-ingestion')
 @Controller('document-ingestion')
@@ -33,11 +34,13 @@ export class DocumentIngestionController {
   })
   @ApiConsumes('multipart/form-data')
   @ApiResponse({ status: 200, type: String })
-  @UseInterceptors(FileInterceptor('file', { preservePath: true }))
+  @UseInterceptors(
+    FileInterceptor('file', { preservePath: true, dest: 'uploads' }),
+  )
   async parsePdfFile(
     @UploadedFile() file: Express.Multer.File,
-    @Body() body: FileParserDto,
+    @Body() body: DocumentIngestionDto,
   ) {
-    return this.documentIngestionService.ingestUserDocuments(file, body);
+    return this.documentIngestionService.ingestUserDocuments(file, body.email);
   }
 }

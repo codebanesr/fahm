@@ -44,7 +44,9 @@ export class PineconeAdapterService implements VectorDBClient {
   }
 
   async addDocumentsToIndex({ docs, vectorNamespace }: EmbedDocumentsOptions) {
-    const embeddings = new OpenAIEmbeddings();
+    const embeddings = new OpenAIEmbeddings({
+      openAIApiKey: process.env.openaiKey,
+    });
     const pineconeIndex = this.client.Index(process.env.PINECONE_INDEX);
     const store = await PineconeStore.fromExistingIndex(embeddings, {
       pineconeIndex,

@@ -5,6 +5,7 @@ import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { VectorDBClient } from 'src/db-utils/vector-db-client.interface';
 import { CreateIndexDTO } from './dto/create-index.dto';
 import { FileParserDto } from 'src/completion/dto/payload.dto';
+import { DocumentIngestionDto } from 'src/completion/dto';
 
 @Injectable()
 export class DocumentIngestionService {
@@ -50,7 +51,7 @@ export class DocumentIngestionService {
     }
   }
 
-  async ingestUserDocuments(file: Express.Multer.File, body: FileParserDto) {
+  async ingestUserDocuments(file: Express.Multer.File, email: string) {
     const loader = new PDFLoader(file.path, { splitPages: true });
     const rawDocs = await loader.load();
 
@@ -64,7 +65,7 @@ export class DocumentIngestionService {
     await this.vectorDbClient.addDocumentsToIndex({
       docs,
       vectorIndexName: process.env.PINECONE_INDEX_NAME,
-      vectorNamespace: 'shanur',
+      vectorNamespace: email,
       id: file.originalname,
     });
 

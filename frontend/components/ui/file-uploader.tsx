@@ -5,27 +5,21 @@ export default function FileUploader() {
   const [files, setFiles] = useState<File[]>([]);
 
   const { user } = useUser();
-  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const uploadedFiles =
       e.target.files != null ? Array.from(e.target.files) : [];
 
     // Get user's email from Auth0
     const email = user?.email || 'x-random@email.com';
 
-    // Get access token to make API call
-
     const formData = new FormData();
     formData.append('file', uploadedFiles[0]);
     formData.append('email', email);
 
-    fetch('http://localhost:3000/document-ingestion', {
+    await fetch('http://localhost:3000/document-ingestion', {
       method: 'POST',
       body: formData,
-    })
-      .then((res) => {
-        setFiles((prevFiles) => [...prevFiles, ...uploadedFiles]);
-      })
-      .catch((err) => console.log(err));
+    });
   };
 
   return (

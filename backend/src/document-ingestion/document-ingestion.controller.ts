@@ -35,7 +35,7 @@ export class DocumentIngestionController {
   @ApiConsumes('multipart/form-data')
   @ApiResponse({ status: 200, type: String })
   @UseInterceptors(
-    FileInterceptor('file', { preservePath: true, dest: 'uploads' }),
+    FileInterceptor('file', { preservePath: true, dest: 'upload' }),
   )
   async parsePdfFile(
     @UploadedFile() file: Express.Multer.File,

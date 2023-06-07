@@ -62,7 +62,7 @@ export class DocumentIngestionService {
 
     const docs = await textSplitter.splitDocuments(rawDocs);
 
-    await this.vectorDbClient.addDocumentsToIndex({
+    await this.vectorDbClient.embedDocuments({
       docs,
       vectorIndexName: process.env.PINECONE_INDEX_NAME,
       vectorNamespace: email,

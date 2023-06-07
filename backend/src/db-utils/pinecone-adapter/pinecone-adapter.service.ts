@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { PineconeClient } from '@pinecone-database/pinecone';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { PineconeStore } from 'langchain/vectorstores/pinecone';
@@ -33,7 +33,9 @@ export class PineconeAdapterService implements VectorDBClient {
     vectorIndexName,
     vectorNamespace,
   }: EmbedDocumentsOptions): Promise<void> {
-    const embeddings = new OpenAIEmbeddings();
+    const embeddings = new OpenAIEmbeddings({
+      openAIApiKey: process.env.openaiKey,
+    });
     const index = this.client.Index(vectorIndexName);
 
     await PineconeStore.fromDocuments(docs, embeddings, {
@@ -55,6 +57,7 @@ export class PineconeAdapterService implements VectorDBClient {
 
     await store.addDocuments(docs);
   }
+
   async delete(indexName: string): Promise<void> {
     await this.client.deleteIndex({ indexName });
   }

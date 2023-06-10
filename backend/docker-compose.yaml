@@ -10,6 +10,7 @@ services:
     env_file:
       - .env
     restart: always
+    
   nginx:
     image: jlenartjwp/jwt-nginx
     container_name: nginx

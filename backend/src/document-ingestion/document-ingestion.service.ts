@@ -4,8 +4,6 @@ import { PDFLoader } from 'langchain/document_loaders/fs/pdf';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { VectorDBClient } from 'src/db-utils/vector-db-client.interface';
 import { CreateIndexDTO } from './dto/create-index.dto';
-import { FileParserDto } from 'src/completion/dto/payload.dto';
-import { DocumentIngestionDto } from 'src/completion/dto';
 
 @Injectable()
 export class DocumentIngestionService {
@@ -24,6 +22,9 @@ export class DocumentIngestionService {
       });
 
       const rawDocs = await directoryLoader.load();
+      rawDocs.forEach((doc) => {
+        doc.metadata.search_context = 'master_dir';
+      });
 
       /* Split text into chunks */
       const textSplitter = new RecursiveCharacterTextSplitter({
@@ -61,6 +62,9 @@ export class DocumentIngestionService {
     });
 
     const docs = await textSplitter.splitDocuments(rawDocs);
+    docs.forEach((doc) => {
+      doc.metadata.search_context = email;
+    });
 
     await this.vectorDbClient.embedDocuments({
       docs,

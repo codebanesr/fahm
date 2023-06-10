@@ -35,7 +35,7 @@ export default async function handler(
         pineconeIndex: index,
         textKey: 'text',
         filter: {
-          ns: { $in: [user_dir, 'master_dir'] },
+          search_context: { $in: [user_dir, 'master_dir'] },
         },
       },
     );

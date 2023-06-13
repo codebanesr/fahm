@@ -81,6 +81,7 @@ export default function Home() {
         body: JSON.stringify({
           question,
           history,
+          user_dir: user?.email
         }),
       });
       const data = await response.json();

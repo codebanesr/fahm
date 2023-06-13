@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsOptional } from 'class-validator';
 
 export class DocumentIngestionDto {
   @ApiProperty({
@@ -10,7 +11,10 @@ export class DocumentIngestionDto {
 
   @ApiProperty({
     type: 'string',
-    description: 'The file to be parsed.',
+    required: false,
+    description:
+      'The file to be parsed, if email is not passed, the docs will be moved to master_dir',
   })
+  @IsOptional()
   email: string;
 }

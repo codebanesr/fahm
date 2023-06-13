@@ -12,20 +12,13 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { FileParserDto } from 'src/completion/dto/payload.dto';
-import { DocumentIngestionService } from './document-ingestion.service';
-import { CreateIndexDTO } from './dto/create-index.dto';
 import { DocumentIngestionDto } from 'src/completion/dto';
+import { DocumentIngestionService } from './document-ingestion.service';
 
 @ApiTags('document-ingestion')
 @Controller('document-ingestion')
 export class DocumentIngestionController {
   constructor(private documentIngestionService: DocumentIngestionService) {}
-
-  @Post()
-  createIndex(@Body() createIndexDTO: CreateIndexDTO) {
-    return this.documentIngestionService.run(createIndexDTO);
-  }
 
   @Post('pdf')
   @ApiOperation({

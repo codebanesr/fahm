@@ -16,12 +16,18 @@ export default function FileUploader() {
     formData.append('file', uploadedFiles[0]);
     formData.append('email', email);
 
-    await fetch(`${process.env.API_URL}/document-ingestion/pdf`, {
-      method: 'POST',
-      body: formData,
-    });
+    try {
+      const result = await fetch(`${process.env.API_URL}/document-ingestion/pdf`, {
+        method: 'POST',
+        body: formData,
+      });
+  
+      setFiles((prevFiles) => [...prevFiles, ...uploadedFiles]);
+      console.log(result);
+    }catch(e) {
+      console.error(e);
+    }
 
-    setFiles((prevFiles) => [...prevFiles, ...uploadedFiles]);
   };
 
   return (

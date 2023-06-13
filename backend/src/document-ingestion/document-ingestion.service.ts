@@ -1,58 +1,23 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { DirectoryLoader } from 'langchain/document_loaders/fs/directory';
+import { Inject, Injectable } from '@nestjs/common';
 import { PDFLoader } from 'langchain/document_loaders/fs/pdf';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { VectorDBClient } from 'src/db-utils/vector-db-client.interface';
-import { CreateIndexDTO } from './dto/create-index.dto';
 
 @Injectable()
 export class DocumentIngestionService {
   constructor(
     @Inject('VECTOR_DB_CLIENT') private readonly vectorDbClient: VectorDBClient,
   ) {}
-  private logger = new Logger(DocumentIngestionService.name);
 
-  async run(options: CreateIndexDTO) {
-    try {
-      const { directoryPath } = options;
-
-      /*load raw docs from all files in the directory */
-      const directoryLoader = new DirectoryLoader(directoryPath, {
-        '.pdf': (path) => new PDFLoader(path),
-      });
-
-      const rawDocs = await directoryLoader.load();
-      rawDocs.forEach((doc) => {
-        doc.metadata.search_context = 'master_dir';
-      });
-
-      /* Split text into chunks */
-      const textSplitter = new RecursiveCharacterTextSplitter({
-        chunkSize: 1000,
-        chunkOverlap: 200,
-      });
-
-      const docs = await textSplitter.splitDocuments(rawDocs);
-      this.logger.log('split docs', docs);
-
-      this.logger.log('creating vector store...');
-
-      this.vectorDbClient.embedDocuments({
-        docs,
-        vectorIndexName: process.env.PINECONE_INDEX_NAME,
-        vectorNamespace: 'masterData',
-      });
-
-      this.logger.log('ingestion complete');
-
-      return { success: true };
-    } catch (error) {
-      this.logger.error('Failed to ingest your data', error);
-      throw new Error('Failed to ingest your data');
-    }
+  stringToBase64(input: string): string {
+    const buffer = Buffer.from(input, 'utf8');
+    return buffer.toString('base64');
   }
 
-  async ingestUserDocuments(file: Express.Multer.File, email: string) {
+  async ingestUserDocuments(file: Express.Multer.File, email?: string) {
+    const search_context = email
+      ? this.stringToBase64(email)
+      : this.stringToBase64('master_dir');
     const loader = new PDFLoader(file.path, { splitPages: true });
     const rawDocs = await loader.load();
 
@@ -63,16 +28,21 @@ export class DocumentIngestionService {
 
     const docs = await textSplitter.splitDocuments(rawDocs);
     docs.forEach((doc) => {
-      doc.metadata.search_context = email;
+      doc.metadata.search_context = search_context;
     });
 
     await this.vectorDbClient.embedDocuments({
       docs,
       vectorIndexName: process.env.PINECONE_INDEX_NAME,
-      vectorNamespace: email,
+      vectorNamespace: process.env.PINECONE_NS,
       id: file.originalname,
     });
 
-    return true;
+    console.log({
+      search_context,
+      message: 'Finished indexing',
+      index: process.env.PINECONE_INDEX_NAME,
+      namespace: process.env.PINECONE_NS,
+    });
   }
 }

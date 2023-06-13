@@ -5,13 +5,18 @@ import { makeChain } from '@/utils/makechain';
 import { pinecone } from '@/utils/pinecone-client';
 import { PINECONE_INDEX_NAME } from '@/config/pinecone';
 
+function stringToBase64(input: string): string {
+  const buffer = Buffer.from(input, 'utf8');
+  return buffer.toString('base64');
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
   const { question, history, user_dir } = req.body;
 
-  console.log('question', question);
+  console.log({question, history, user_dir});
 
   //only accept post requests
   if (req.method !== 'POST') {
@@ -34,8 +39,12 @@ export default async function handler(
       {
         pineconeIndex: index,
         textKey: 'text',
+        namespace: process.env.PINECONE_NS,
         filter: {
-          search_context: { $in: [user_dir, 'master_dir'] },
+          search_context: { $in: [
+            stringToBase64(user_dir), 
+            stringToBase64('master_dir')
+          ] },
         },
       },
     );
@@ -48,7 +57,6 @@ export default async function handler(
       chat_history: history || [],
     });
 
-    console.log('response', response);
     res.status(200).json(response);
   } catch (error: any) {
     console.log('error', error);

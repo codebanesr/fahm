@@ -12,7 +12,7 @@ services:
     restart: always
     
   nginx:
-    image: jlenartjwp/jwt-nginx
+    image: jlenartjwp/jwt-nginx # ghcr.io/max-lt/nginx-jwt-module:latest for linux
     container_name: nginx
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro

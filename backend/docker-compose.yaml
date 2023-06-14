@@ -1,6 +1,6 @@
 version: '3'
 services:
-  hr_management_api:
+  fahm_backend:
     container_name: hr_management_api
     build:
       context: .

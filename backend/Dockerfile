@@ -27,7 +27,7 @@ COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/package*.json ./
 
 # Expose the port your Nest.js application is listening on (default is 3000)
-EXPOSE 3000
+EXPOSE 8080
 
 # Start the Nest.js application
 CMD [ "npm", "run", "start:prod" ]

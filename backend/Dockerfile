@@ -5,6 +5,10 @@ WORKDIR /app
 
 COPY package*.json ./
 
+# Install build dependencies
+RUN apk update && \
+    apk add --no-cache python3 make g++ gcc
+
 # Install the dependencies
 RUN npm install
 

@@ -12,13 +12,12 @@ export default function Layout({ children }: LayoutProps) {
       <Header />
 
       <div className="flex flex-col lg:flex-row">
-        <div className="w-full lg:w-1/5 mb-4 lg:mb-0 lg:mr-4">
-          <FileUploader />
-        </div>
-
         <main className="w-full lg:w-4/5 flex-grow overflow-hidden">
           {children}
         </main>
+        <div className="w-full lg:w-1/5 mb-4 lg:mb-0 lg:mr-4">
+          <FileUploader />
+        </div>
       </div>
       
       <Footer />

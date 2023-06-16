@@ -81,7 +81,7 @@ export default function Home() {
         body: JSON.stringify({
           question,
           history,
-          user_dir: user?.email
+          user_dir: user?.email,
         }),
       });
       const data = await response.json();
@@ -130,11 +130,7 @@ export default function Home() {
       {!user && <Landing />}
       {user && (
         <Layout>
-
           <div className="mx-auto flex flex-col gap-4">
-            <h1 className="text-2xl font-bold leading-[1.1] tracking-tighter text-center">
-              IPC Companion: Engage in Conversations Rooted in Law
-            </h1>
             <main className={styles.main}>
               <div className={styles.cloud}>
                 <div ref={messageListRef} className={styles.messagelist}>
@@ -268,12 +264,6 @@ export default function Home() {
               )}
             </main>
           </div>
-          <footer className="m-auto p-4">
-            <a href="https://twitter.com/iamshanurrahman">
-              Powered by LangChainAI. Demo created by Shanur (Twitter:
-              @iamshanurrahman).
-            </a>
-          </footer>
         </Layout>
       )}
     </>

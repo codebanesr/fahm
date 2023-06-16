@@ -31,8 +31,8 @@ export default function FileUploader() {
   };
 
   return (
-    <div className="flex flex-col items-center">
-      <label className="p-4 border-2 border-dashed w-64 cursor-pointer hover:border-blue-500">
+    <div className="flex flex-col items-center p-4">
+        <label className="p-4 border-2 border-dashed w-48 cursor-pointer hover:border-blue-500">
         <div>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -58,7 +58,7 @@ export default function FileUploader() {
         />
       </label>
 
-      <div className="flex flex-wrap w-64">
+      <div className="flex flex-wrap w-48">
         {files.map((file) => (
           <div key={file.name} className="m-2 p-2 border-2 border-dashed">
             {file.name}

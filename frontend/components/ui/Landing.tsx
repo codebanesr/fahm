@@ -19,7 +19,7 @@ const tools = [
     tryNowLink: '/feature-extraction-demo',
   },
   {
-    title: 'Custom Knowledge Base',
+    title: 'Knowledge Base',
     description:
       'Build your own knowledge base using generative AI and enhance your applications.',
     learnMoreLink: '/knowledge-base',
@@ -53,9 +53,12 @@ const Landing: React.FC = () => {
             Sign up or log in to access the features of our amazing AI tools.
           </p>
           <div className="mt-8">
-            <div className="flex justify-center">
+            <div className="flex flex-wrap justify-center">
               {tools.map((tool, index) => (
-                <div key={index} className="w-1/3 p-4">
+                <div
+                  key={index}
+                  className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-4"
+                >
                   <div className="bg-white shadow rounded-lg p-6">
                     <h2 className="text-xl font-semibold">{tool.title}</h2>
                     <p className="mt-2 text-gray-600">{tool.description}</p>
@@ -78,16 +81,17 @@ const Landing: React.FC = () => {
                 </div>
               ))}
             </div>
-            <div className="flex justify-center mt-8">
+            <div className="flex flex-wrap justify-center mt-8">
               <a
                 href="/signup"
-                className="text-base font-medium text-blue-600 hover:text-blue-500"
+                className="text-base font-medium text-blue-600 hover:text-blue-500 mb-2 sm:mb-0 sm:mr-6"
               >
                 Sign Up
               </a>
+              &nbsp;&nbsp;&nbsp;
               <Link
                 href="/api/auth/login"
-                className="ml-4 text-base font-medium text-blue-600 hover:text-blue-500"
+                className="text-base font-medium text-blue-600 hover:text-blue-500"
               >
                 Log In
               </Link>

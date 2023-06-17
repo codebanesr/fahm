@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# Function to display script usage
+function show_help() {
+  echo "Usage: ./run_fahm.sh [OPTIONS]"
+  echo "Run the 'fahm' binary on the 'highcompute' server via SSH"
+  echo
+  echo "Options:"
+  echo "  -h, --help     Show help"
+  echo "  -b             Run 'fahm -b'"
+  exit 0
+}
+
+# Parse command-line arguments
+run_b_flag=false
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -h|--help)
+      show_help
+      ;;
+    -b)
+      run_b_flag=true
+      shift
+      ;;
+    *)
+      echo "Invalid option: $1"
+      echo "Use -h or --help for more information."
+      exit 1
+      ;;
+  esac
+done
+
+# SSH into the 'highcompute' server and run the appropriate command
+if [[ $run_b_flag == true ]]; then
+  echo "Running 'fahm -b' on 'highcompute' via SSH..."
+  ssh highcompute "fahm -b"
+else
+  echo "Running 'fahm' on 'highcompute' via SSH..."
+  ssh highcompute "fahm"
+fi
+

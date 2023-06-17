@@ -6,6 +6,11 @@ export interface RemoveDocumentsByIdOptions {
   namespace: string;
 }
 
+export type RemoveDocumentsByFilter = Pick<
+  RemoveDocumentsByIdOptions,
+  'namespace' | 'indexName'
+> & { filter: Record<string, string> };
+
 /**
  * This interface represents a client for interacting with a Vector Database.
  * Implementations of this interface provide methods for deleting an index, describing index statistics,
@@ -52,6 +57,18 @@ export interface VectorDBClient {
    * @returns A promise that resolves when the removal is complete.
    */
   removeDocumentsById(options: RemoveDocumentsByIdOptions): Promise<void>;
+
+  /**
+   * Remove documents from an index based on a filter.
+   * @param options - The options for removing documents.
+   */
+  removeDocumentsByFilter(options: RemoveDocumentsByFilter): Promise<void>;
+
+  /**
+   * Delete all documents from an index.
+   * @param indexName - The name of the index to delete documents from.
+   */
+  deleteAllFromIndex(indexName: string): Promise<void>;
 }
 
 export interface EmbedDocumentsOptions {

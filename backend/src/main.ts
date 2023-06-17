@@ -4,7 +4,11 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  if (process.env.NODE_ENV !== 'prod') {
+    app.enableCors();
+  }
 
+  app.setGlobalPrefix('_api');
   // Create a Swagger document
   const options = new DocumentBuilder()
     .setTitle('Feature Extraction System')

@@ -1,24 +1,35 @@
 import {
   Body,
   Controller,
+  Delete,
+  Get,
+  Inject,
+  Param,
   Post,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
+  ApiBadRequestResponse,
   ApiConsumes,
+  ApiOkResponse,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { DocumentIngestionDto } from 'src/completion/dto';
 import { DocumentIngestionService } from './document-ingestion.service';
+import { RemoveDocumentsDto } from './dto/remove-documents.dto';
+import { VectorDBClient } from 'src/db-utils/vector-db-client.interface';
 
 @ApiTags('document-ingestion')
 @Controller('document-ingestion')
 export class DocumentIngestionController {
-  constructor(private documentIngestionService: DocumentIngestionService) {}
+  constructor(
+    private documentIngestionService: DocumentIngestionService,
+    @Inject('VECTOR_DB_CLIENT') private readonly vectorDbClient: VectorDBClient,
+  ) {}
 
   @Post('pdf')
   @ApiOperation({
@@ -35,5 +46,35 @@ export class DocumentIngestionController {
     @Body() body: DocumentIngestionDto,
   ) {
     return this.documentIngestionService.ingestUserDocuments(file, body.email);
+  }
+
+  @ApiOperation({ summary: 'Remove documents by filter' })
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  @ApiOkResponse({ description: 'Documents removed successfully' })
+  @Post('/remove-by-filter')
+  async removeDocumentsByFilter(
+    @Body() removeDocumentsDto: RemoveDocumentsDto,
+  ) {
+    try {
+      return await this.documentIngestionService.removeDocumentsByFilter(
+        removeDocumentsDto,
+      );
+    } catch (error) {
+      // Handle and return appropriate error response
+    }
+  }
+
+  @Delete('/remove/docs/all')
+  async deleteAllDocs() {
+    await this.vectorDbClient.deleteAllFromIndex(
+      process.env.PINECONE_INDEX_NAME,
+    );
+
+    return { status: 'ok', done: true };
+  }
+
+  @Get('uploads/:email')
+  async getAllUploadedFiles(@Param('email') email: string) {
+    return this.documentIngestionService.getAllUploadedFiles(email);
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import {
   EmbedDocumentsOptions,
+  RemoveDocumentsByFilter,
   RemoveDocumentsByIdOptions,
   VectorDBClient,
 } from '../vector-db-client.interface';
@@ -14,6 +15,12 @@ export class QdrantAdapterService implements VectorDBClient {
 
   constructor() {
     this.client = new QdrantClient({ url: process.env.QDrantUrl });
+  }
+  removeDocumentsByFilter(options: RemoveDocumentsByFilter): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  deleteAllFromIndex(indexName: string): Promise<void> {
+    throw new Error('Method not implemented.');
   }
   addDocumentsToIndex(options: EmbedDocumentsOptions): Promise<void> {
     throw new Error('Method not implemented.');

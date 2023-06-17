@@ -11,6 +11,17 @@ services:
       - .env
     restart: always
     
+  nextjs_app:
+    container_name: nextjs_app
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    env_file:
+      - ../frontend/.env
+    restart: always
+    
   nginx:
     image: jlenartjwp/jwt-nginx # ghcr.io/max-lt/nginx-jwt-module:latest for linux
     container_name: nginx
@@ -19,4 +30,3 @@ services:
     ports:
       - 80:80
     restart: always
-

@@ -1,13 +1,27 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import Chip from './upload-chip';
+import { fetchFiles } from '@/pages/api/fetch-files';
+import { FileMeta } from '@/interfaces/file.interface';
 
 export default function FileUploader() {
-  const [files, setFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState<FileMeta[]>([]);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
 
   const { user } = useUser();
+  // Get user's email from Auth0
+  const email = user?.email || 'x-random@email.com';
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchFiles(email);
+      setFiles(data);
+    };
+
+    fetchData();
+  }, []);
+
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const uploadedFiles =
       e.target.files != null ? Array.from(e.target.files) : [];
@@ -29,11 +43,12 @@ export default function FileUploader() {
         },
       );
 
-      setFiles((prevFiles) => [...prevFiles, ...uploadedFiles]);
+      const file: FileMeta = await result.json();
+      setFiles((prevFiles) => [...prevFiles, file]);
       setUploading(false);
     } catch (e) {
       setUploading(false);
-      setError("Error uploading file");
+      setError('Error uploading file');
       console.error(e);
     }
   };
@@ -79,8 +94,11 @@ export default function FileUploader() {
       {error && <div className="mt-4 text-red-500">{error}</div>}
       <div className="flex flex-wrap w-48 mt-4">
         {files.map((file) => (
-          <div key={file.name} className="m-2 p-2 border-2 border-dashed">
-            {file.name}
+          <div
+            key={file.originalName}
+            className="m-2 p-2 border-2 border-dashed"
+          >
+            {file.originalName}
           </div>
         ))}
       </div>

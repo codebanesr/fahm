@@ -38,24 +38,36 @@ export class PineconeAdapterService implements VectorDBClient {
     });
     const index = this.client.Index(vectorIndexName);
 
-    await PineconeStore.fromDocuments(docs, embeddings, {
+    const store = await PineconeStore.fromDocuments(docs, embeddings, {
       pineconeIndex: index,
       namespace: vectorNamespace,
       textKey: 'text',
     });
+
+    console.log({ store });
   }
 
-  async addDocumentsToIndex({ docs, vectorNamespace }: EmbedDocumentsOptions) {
-    const embeddings = new OpenAIEmbeddings({
-      openAIApiKey: process.env.openaiKey,
-    });
-    const pineconeIndex = this.client.Index(process.env.PINECONE_INDEX);
-    const store = await PineconeStore.fromExistingIndex(embeddings, {
-      pineconeIndex,
-      namespace: vectorNamespace,
-    });
+  async addDocumentsToIndex({
+    docs,
+    vectorNamespace,
+    vectorIndexName,
+  }: EmbedDocumentsOptions) {
+    try {
+      const embeddings = new OpenAIEmbeddings({
+        openAIApiKey: process.env.openaiKey,
+      });
 
-    await store.addDocuments(docs);
+      const pineconeIndex = this.client.Index(vectorIndexName);
+      const store = await PineconeStore.fromExistingIndex(embeddings, {
+        pineconeIndex,
+        namespace: vectorNamespace,
+        textKey: 'text',
+      });
+
+      await store.addDocuments(docs);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   async delete(indexName: string): Promise<void> {

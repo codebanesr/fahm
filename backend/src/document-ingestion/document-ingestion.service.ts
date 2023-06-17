@@ -31,7 +31,8 @@ export class DocumentIngestionService {
       doc.metadata.search_context = search_context;
     });
 
-    await this.vectorDbClient.embedDocuments({
+    // embedDocuments -> addDocumentsToIndex
+    await this.vectorDbClient.addDocumentsToIndex({
       docs,
       vectorIndexName: process.env.PINECONE_INDEX_NAME,
       vectorNamespace: process.env.PINECONE_NS,

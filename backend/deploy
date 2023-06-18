@@ -1,42 +1,55 @@
 #!/bin/bash
 
-# Function to display script usage
-function show_help() {
-  echo "Usage: ./run_fahm.sh [OPTIONS]"
-  echo "Run the 'fahm' binary on the 'highcompute' server via SSH"
-  echo
-  echo "Options:"
-  echo "  -h, --help     Show help"
-  echo "  -b             Run 'fahm -b'"
-  exit 0
+usage() {
+  echo "Usage: $0 [COMMAND]"
+  echo ""
+  echo "Available commands:"
+  echo "  up       - Start the services using Docker Compose"
+  echo "  down     - Stop and remove the services using Docker Compose"
+  echo "  build    - Build the Docker images using Docker Compose"
+  echo "  help     - Show this help message"
+  exit 1
 }
 
-# Parse command-line arguments
-run_b_flag=false
-
-while [[ $# -gt 0 ]]; do
-  case $1 in
-    -h|--help)
-      show_help
-      ;;
-    -b)
-      run_b_flag=true
-      shift
-      ;;
-    *)
-      echo "Invalid option: $1"
-      echo "Use -h or --help for more information."
-      exit 1
-      ;;
-  esac
-done
-
-# SSH into the 'highcompute' server and run the appropriate command
-if [[ $run_b_flag == true ]]; then
-  echo "Running 'fahm -b' on 'highcompute' via SSH..."
-  ssh highcompute "fahm -b"
-else
-  echo "Running 'fahm' on 'highcompute' via SSH..."
-  ssh highcompute "fahm"
+# Check if a command is provided
+if [[ -z $1 ]]; then
+  usage
 fi
 
+# Handle the command
+case $1 in
+  up)
+    # Detect the CPU architecture
+    CPU_ARCH=$(uname -m)
+
+    # Set the Docker image based on the CPU architecture
+    if [[ $CPU_ARCH == "arm"* ]]; then
+      DOCKER_IMAGE=jlenartjwp/jwt-nginx
+    else
+      DOCKER_IMAGE=ghcr.io/max-lt/nginx-jwt-module:latest
+    fi
+
+    # Export the Docker image variable
+    export DOCKER_IMAGE
+
+    # Start the services using Docker Compose
+    docker-compose up -d
+    ;;
+  down)
+    # Stop and remove the services using Docker Compose
+    docker-compose down
+    ;;
+  build)
+    # Build the Docker images using Docker Compose
+    docker-compose build
+    ;;
+  help)
+    # Show the usage and available commands
+    usage
+    ;;
+  *)
+    # Invalid command
+    echo "Error: Invalid command '$1'"
+    usage
+    ;;
+esac

@@ -1,4 +1,5 @@
 version: '3'
+
 services:
   fahm_backend:
     container_name: fahm_backend
@@ -10,7 +11,7 @@ services:
     env_file:
       - .env
     restart: always
-    
+
   nextjs_app:
     container_name: nextjs_app
     build:
@@ -21,12 +22,19 @@ services:
     env_file:
       - ../frontend/.env
     restart: always
-    
+
   nginx:
     image: jlenartjwp/jwt-nginx # ghcr.io/max-lt/nginx-jwt-module:latest for linux
     container_name: nginx
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
     ports:
       - 80:80
+      - 443:443
     restart: always
+
+volumes:
+  certbot-etc:
+  certbot-var:

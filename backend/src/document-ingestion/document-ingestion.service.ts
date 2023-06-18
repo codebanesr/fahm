@@ -23,8 +23,16 @@ export class DocumentIngestionService {
     return this.fileService.findAll({ email });
   }
 
-  async removeDocumentsByFilter(options: RemoveDocumentsByFilter) {
-    return this.vectorDbClient.removeDocumentsByFilter(options);
+  async removeDocumentsByFilter(
+    file_base64: string,
+    options: RemoveDocumentsByFilter,
+  ) {
+    await this.fileService.removeFileByBase64(file_base64);
+    return this.vectorDbClient.removeDocumentsByFilter({
+      filter: { file_base64 },
+      indexName: process.env.PINECONE_INDEX_NAME,
+      namespace: process.env.PINECONE_NS,
+    });
   }
 
   async ingestUserDocuments(file: Express.Multer.File, email?: string) {

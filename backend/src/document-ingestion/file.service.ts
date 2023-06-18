@@ -14,6 +14,10 @@ export class FileService {
     return this.fileModel.find(filter).exec();
   }
 
+  async removeFileByBase64(file_base64: string) {
+    return this.fileModel.deleteOne({ file_base64 });
+  }
+
   async create(file: Omit<FileMeta, keyof Document>): Promise<FileMeta> {
     const newFile = new this.fileModel(file);
     return newFile.save();

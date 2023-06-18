@@ -51,12 +51,14 @@ export class DocumentIngestionController {
   @ApiOperation({ summary: 'Remove documents by filter' })
   @ApiBadRequestResponse({ description: 'Bad request' })
   @ApiOkResponse({ description: 'Documents removed successfully' })
-  @Post('/remove-by-filter')
+  @Delete('/remove/:file_base64')
   async removeDocumentsByFilter(
+    @Param('file_base64') file_base64: string,
     @Body() removeDocumentsDto: RemoveDocumentsDto,
   ) {
     try {
       return await this.documentIngestionService.removeDocumentsByFilter(
+        file_base64,
         removeDocumentsDto,
       );
     } catch (error) {

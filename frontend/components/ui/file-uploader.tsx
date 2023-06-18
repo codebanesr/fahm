@@ -22,6 +22,32 @@ export default function FileUploader() {
     fetchData();
   }, []);
 
+  const handleDelete = async (file_base64: string) => {
+    try {
+      // Make the API call to delete the file
+      const response = await fetch(`${process.env.API_URL}/document-ingestion/remove/${file_base64}`, {
+        method: 'DELETE',
+        body: JSON.stringify({ email }),
+      });
+      
+
+      if (response.ok) {
+        // If the API call is successful, update the state
+        setFiles((prevFiles) => prevFiles.filter((file) => file.file_base64 !== file_base64));
+      } else {
+        // Handle error cases if needed
+        console.error(
+          'Failed to delete file:',
+          response.status,
+          response.statusText,
+        );
+      }
+    } catch (error) {
+      // Handle any network or other errors
+      console.error('An error occurred while deleting the file:', error);
+    }
+  };
+
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const uploadedFiles =
       e.target.files != null ? Array.from(e.target.files) : [];
@@ -95,10 +121,16 @@ export default function FileUploader() {
       <div className="flex flex-wrap w-48 mt-4">
         {files.map((file) => (
           <div
-            key={file.originalName}
-            className="m-2 p-2 border-2 border-dashed"
+            key={file.file_base64}
+            className="m-2 p-2 border-2 border-dashed flex items-center"
           >
-            {file.originalName}
+            <span>{file.originalName}</span>
+            <button
+              className="ml-2 text-red-600"
+              onClick={() => handleDelete(file.file_base64)}
+            >
+              Delete
+            </button>
           </div>
         ))}
       </div>

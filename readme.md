@@ -54,9 +54,7 @@ To deliver the extensive functionality described above, our solution incorporate
 
 The frontend of our application presents an intuitive and user-friendly interface, seamlessly integrating GPT-4 and LangChain to deliver a state-of-the-art chatbot experience.
 
-<div align="center">
-  <img src="icons/fahm.png" alt="Knowledge Base App UI Screenshot" width="800">
-</div>
+[![Demo](https://img.youtube.com/vi/kcrqQYgoEEk/0.jpg)](https://www.youtube.com/watch?v=kcrqQYgoEEk)
 
 **How to Use:**
 

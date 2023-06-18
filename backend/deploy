@@ -1,36 +1,5 @@
 #!/bin/bash
 
-# Function to display script usage
-function show_help() {
-  echo "Usage: ./run_fahm.sh [OPTIONS]"
-  echo "Run the 'fahm' binary on the 'highcompute' server via SSH"
-  echo
-  echo "Options:"
-  echo "  -h, --help     Show help"
-  echo "  -b             Run 'fahm -b'"
-  exit 0
-}
-
-# Parse command-line arguments
-run_b_flag=false
-
-while [[ $# -gt 0 ]]; do
-  case $1 in
-    -h|--help)
-      show_help
-      ;;
-    -b)
-      run_b_flag=true
-      shift
-      ;;
-    *)
-      echo "Invalid option: $1"
-      echo "Use -h or --help for more information."
-      exit 1
-      ;;
-  esac
-done
-
 # Detect the CPU architecture
 CPU_ARCH=$(uname -m)
 
@@ -44,11 +13,25 @@ fi
 # Export the Docker image variable
 export DOCKER_IMAGE
 
-# SSH into the 'highcompute' server and run the appropriate command
-if [[ $run_b_flag == true ]]; then
-  echo "Running 'fahm -b' on 'highcompute' via SSH..."
-  ssh highcompute "DOCKER_IMAGE=$DOCKER_IMAGE fahm -b"
-else
-  echo "Running 'fahm' on 'highcompute' via SSH..."
-  ssh highcompute "DOCKER_IMAGE=$DOCKER_IMAGE fahm"
-fi
+# Determine the command
+COMMAND=$1
+
+# Check the command and execute the corresponding Docker Compose command
+case "$COMMAND" in
+  up)
+    docker-compose up -d
+    ;;
+  down)
+    docker-compose down
+    ;;
+  build)
+    docker-compose build
+    ;;
+  help)
+    docker-compose help
+    ;;
+  *)
+    echo "Invalid command. Please use 'up', 'down', 'build', or 'help'."
+    exit 1
+    ;;
+esac

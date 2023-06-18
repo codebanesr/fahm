@@ -71,3 +71,61 @@ We kindly request you to consider starring this repository if you find it useful
     <img src="icons/githubstar.webp" alt="Star Icon" width="100" height="100">
   </a>
 </div>
+
+--- 
+
+## Deployment and scaling
+To start and scale the app defined in the given Docker Compose file and Nginx configuration, you can follow the steps outlined below:
+
+## Prerequisites
+
+Before starting, make sure you have the following prerequisites:
+
+- Docker installed on your system
+- Docker Compose installed on your system
+
+## Starting the App
+
+1. Create a directory for your project and navigate to it in your terminal.
+
+2. Create a file named `docker-compose.yml` and copy the contents of the given Docker Compose file into it.
+
+3. Create a file named `nginx.conf` in the same directory and copy the contents of the given Nginx configuration file into it.
+
+4. In the `docker-compose.yml` file, adjust any necessary paths or configurations according to your project structure and requirements. For example, you might need to update the `context` and `dockerfile` paths under the `nextjs_app` service to match your frontend setup.
+
+5. Open a terminal in the project directory and run the following command to start the app:
+
+   ```
+   docker-compose up -d
+   ```
+
+   This command will build the Docker images defined in the Compose file, create the containers, and start them in detached mode.
+
+6. Wait for Docker to pull the necessary images, build the app containers, and start the services. You can monitor the progress and see the logs by running:
+
+   ```
+   docker-compose logs -f
+   ```
+
+7. Once the services are up and running without any errors, you should be able to access your app. In a web browser, navigate to `http://localhost` to access the Next.js app and `http://localhost/_api` to access the backend API.
+
+## Scaling the App
+
+To scale your app horizontally by adding more instances of the services, you can use the `docker-compose up` command with the `--scale` option.
+
+For example, to scale the `fahm_backend` service to run three instances, run the following command:
+
+```
+docker-compose up -d --scale fahm_backend=3
+```
+
+This command will create two additional containers running the `fahm_backend` service.
+
+You can similarly scale the `nextjs_app` service or any other service defined in your `docker-compose.yml` file by specifying its name and the desired number of instances.
+
+Scaling your app allows you to handle increased traffic and distribute the load across multiple containers.
+
+Remember to monitor the resource usage of your system and adjust the scaling based on your server's capacity and performance requirements.
+
+That's it! You now have the app up and running with the ability to scale it as needed.

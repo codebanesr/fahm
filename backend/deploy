@@ -1,37 +1,55 @@
 #!/bin/bash
 
-# Detect the CPU architecture
-CPU_ARCH=$(uname -m)
+usage() {
+  echo "Usage: $0 [COMMAND]"
+  echo ""
+  echo "Available commands:"
+  echo "  up       - Start the services using Docker Compose"
+  echo "  down     - Stop and remove the services using Docker Compose"
+  echo "  build    - Build the Docker images using Docker Compose"
+  echo "  help     - Show this help message"
+  exit 1
+}
 
-# Set the Docker image based on the CPU architecture
-if [[ $CPU_ARCH == "arm"* ]]; then
-  DOCKER_IMAGE=jlenartjwp/jwt-nginx
-else
-  DOCKER_IMAGE=ghcr.io/max-lt/nginx-jwt-module:latest
+# Check if a command is provided
+if [[ -z $1 ]]; then
+  usage
 fi
 
-# Export the Docker image variable
-export DOCKER_IMAGE
-
-# Determine the command
-COMMAND=$1
-
-# Check the command and execute the corresponding Docker Compose command
-case "$COMMAND" in
+# Handle the command
+case $1 in
   up)
+    # Detect the CPU architecture
+    CPU_ARCH=$(uname -m)
+
+    # Set the Docker image based on the CPU architecture
+    if [[ $CPU_ARCH == "arm"* ]]; then
+      DOCKER_IMAGE=jlenartjwp/jwt-nginx
+    else
+      DOCKER_IMAGE=ghcr.io/max-lt/nginx-jwt-module:latest
+    fi
+
+    # Export the Docker image variable
+    export DOCKER_IMAGE
+
+    # Start the services using Docker Compose
     docker-compose up -d
     ;;
   down)
+    # Stop and remove the services using Docker Compose
     docker-compose down
     ;;
   build)
+    # Build the Docker images using Docker Compose
     docker-compose build
     ;;
   help)
-    docker-compose help
+    # Show the usage and available commands
+    usage
     ;;
   *)
-    echo "Invalid command. Please use 'up', 'down', 'build', or 'help'."
-    exit 1
+    # Invalid command
+    echo "Error: Invalid command '$1'"
+    usage
     ;;
 esac

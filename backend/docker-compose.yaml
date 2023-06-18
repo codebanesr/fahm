@@ -48,7 +48,7 @@ services:
     container_name: certbot
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt
-      - ./certbot/conf:/etc/letsencrypt # Optional: customize Certbot configuration
+      - ./certbot/conf:/etc/letsencrypt/conf # Optional: customize Certbot configuration
       - ./certbot/www:/var/www/certbot # Optional: store webroot files for challenges
     command: certonly --webroot --webroot-path=/var/www/certbot -d fahm.applesauce.co.in
     restart: unless-stopped

@@ -7,6 +7,14 @@ usage() {
   echo "  up       - Start the services using Docker Compose"
   echo "  down     - Stop and remove the services using Docker Compose"
   echo "  build    - Build the Docker images using Docker Compose"
+  echo "  logs [CONTAINER] - Display logs for a specific container (or all containers if not specified)"
+  echo "  restart  - Restart the services using Docker Compose"
+  echo "  status   - Show the status of the services using Docker Compose"
+  echo "  prune    - Remove stopped containers, unused networks, and dangling images"
+  echo "  exec [CONTAINER] [COMMAND] - Execute a command inside a running container"
+  echo "  ps       - List the running containers"
+  echo "  images   - List the Docker images"
+  echo "  pull     - Pull the latest Docker images from the registry"
   echo "  help     - Show this help message"
   exit 1
 }
@@ -16,22 +24,22 @@ if [[ -z $1 ]]; then
   usage
 fi
 
+# Detect the CPU architecture
+CPU_ARCH=$(uname -m)
+
+# Set the Docker image based on the CPU architecture
+if [[ $CPU_ARCH == "arm"* ]]; then
+  DOCKER_IMAGE=jlenartjwp/jwt-nginx
+else
+  DOCKER_IMAGE=ghcr.io/max-lt/nginx-jwt-module:latest
+fi
+
+# Export the Docker image variable
+export DOCKER_IMAGE
+
 # Handle the command
 case $1 in
   up)
-    # Detect the CPU architecture
-    CPU_ARCH=$(uname -m)
-
-    # Set the Docker image based on the CPU architecture
-    if [[ $CPU_ARCH == "arm"* ]]; then
-      DOCKER_IMAGE=jlenartjwp/jwt-nginx
-    else
-      DOCKER_IMAGE=ghcr.io/max-lt/nginx-jwt-module:latest
-    fi
-
-    # Export the Docker image variable
-    export DOCKER_IMAGE
-
     # Start the services using Docker Compose
     docker-compose up -d
     ;;
@@ -42,6 +50,49 @@ case $1 in
   build)
     # Build the Docker images using Docker Compose
     docker-compose build
+    ;;
+  logs)
+    if [ -z "$2" ]; then
+      # Display logs for all containers
+      docker-compose logs --tail=all
+    else
+      # Display logs for the specified container
+      docker-compose logs --tail=all "$2"
+    fi
+    ;;
+  restart)
+    # Restart the services using Docker Compose
+    docker-compose restart
+    ;;
+  status)
+    # Show the status of the services using Docker Compose
+    docker-compose ps
+    ;;
+  prune)
+    # Remove stopped containers, unused networks, and dangling images
+    docker-compose down --volumes --remove-orphans
+    docker system prune --all --volumes --force
+    ;;
+  exec)
+    if [ -z "$2" ] || [ -z "$3" ]; then
+      echo "Error: Please provide the container name and command to execute"
+      usage
+    else
+      # Execute a command inside a running container
+      docker-compose exec "$2" "${@:3}"
+    fi
+    ;;
+  ps)
+    # List the running containers
+    docker-compose ps
+    ;;
+  images)
+    # List the Docker images
+    docker-compose images
+    ;;
+  pull)
+    # Pull the latest Docker images from the registry
+    docker-compose pull
     ;;
   help)
     # Show the usage and available commands

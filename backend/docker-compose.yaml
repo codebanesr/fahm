@@ -1,35 +1,60 @@
 version: '3'
+
 services:
   fahm_backend:
-    container_name: fahm_backend
+    # container_name: fahm_backend
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - 8080:8080
+    # ports:
+    #   - 8080:8080
     env_file:
       - .env
     restart: always
-    
+    deploy:
+      replicas: 3
+    networks:
+      - mynetwork
+
   nextjs_app:
-    container_name: nextjs_app
+    # container_name: nextjs_app
     build:
       context: ../frontend
       dockerfile: Dockerfile
-    ports:
-      - 3000:3000
     env_file:
       - ../frontend/.env
     restart: always
-    
+    deploy:
+      replicas: 3
+    networks:
+      - mynetwork
+
   nginx:
-    image: ${DOCKER_IMAGE}
+    image: ${DOCKER_IMAGE} # ghcr.io/max-lt/nginx-jwt-module:latest for linux
     container_name: nginx
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - certbot-etc:/etc/letsencrypt
-      - certbot-var:/var/lib/letsencrypt
+      - /etc/letsencrypt/live/example.com/fullchain.pem:/etc/nginx/certs/fullchain.pem:ro
+      - /etc/letsencrypt/live/example.com/privkey.pem:/etc/nginx/certs/privkey.pem:ro
     ports:
       - 80:80
       - 443:443
     restart: always
+    networks:
+      - mynetwork
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    depends_on:
+      - nginx
+    entrypoint: >
+      sh -c "trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;"
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:

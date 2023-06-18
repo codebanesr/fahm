@@ -1,10 +1,32 @@
 # Knowledge Base App
-
 <div align="center">
   <img src="icons/knowledgebase.jpg" alt="Knowledge Base App Icon" width="150" height="150">
 </div>
 
 Welcome to the Knowledge Base App, a professional-grade solution designed to serve as a comprehensive knowledge base for a specific domain. This application features a robust backend for efficient document ingestion and storage within a vector database. The frontend leverages the power of GPT-4 and Langchain to deliver a sophisticated chatbot interface for interacting with the stored documents.
+
+
+Here's an index for the provided README file with clickable links:
+
+1. [Knowledge Base App](#knowledge-base-app)
+   - [Backend](#backend)
+     - [Ingesting Reference Data](#ingesting-reference-data)
+     - [Multi-Tenant Architecture](#multi-tenant-architecture)
+   - [Solution](#solution)
+     - [Pinecone](#pinecone)
+     - [Search API](#search-api)
+     - [Concurrent Access](#concurrent-access)
+   - [Frontend](#frontend)
+   - [How to Use](#how-to-use)
+   - [Technologies Used](#technologies-used)
+   - [Deployment and Docker Compose](#deployment-and-docker-compose)
+   - [Deployment and scaling](#deployment-and-scaling)
+     - [Prerequisites](#prerequisites)
+     - [Starting the App](#starting-the-app)
+     - [Scaling the App](#scaling-the-app)
+   - [Common issues](#common-issues)
+
+Please note that the links are based on the section headings in the README file, and they will navigate to the corresponding section when clicked.
 
 ## Backend
 
@@ -129,3 +151,42 @@ Scaling your app allows you to handle increased traffic and distribute the load 
 Remember to monitor the resource usage of your system and adjust the scaling based on your server's capacity and performance requirements.
 
 That's it! You now have the app up and running with the ability to scale it as needed.
+
+
+----
+## Common issues
+Guidelines to Prevent CORS Issues:
+
+1. Nginx Configuration:
+   - When running the application in a Docker container, the Nginx configuration should include CORS headers. This ensures that cross-origin requests are allowed. Use the following Nginx configuration:
+   
+     ```
+     add_header 'Access-Control-Allow-Origin' '*' always;
+     add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
+     add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type' always;
+     ```
+   
+2. NestJS Configuration:
+   - When running the application locally, NestJS needs to enable CORS explicitly. This is done by adding the following code snippet to your NestJS app configuration, typically in the `main.ts` file:
+
+     ```
+     if (process.env.NODE_ENV !== 'prod') {
+       app.enableCors();
+     }
+     ```
+   
+3. Set NODE_ENV Environment Variable:
+   - To ensure that the correct environment-specific configurations are applied, set the `NODE_ENV` environment variable accordingly.
+   - When running the application in a Docker container, set `NODE_ENV` to "prod".
+   - When running the application locally, ensure that `NODE_ENV` is not set to "prod".
+
+4. Frontend .env Configuration:
+   - In the frontend directory, take care of the `.env` file.
+   - For the local environment, set `API_URL` to `http://localhost:8080/_api`.
+   - For the production environment, set `API_URL` to `http://localhost/_api`.
+
+5. Docker-Compose Considerations:
+   - If you are using an M1 Silicon-based machine, use the `jlenartjwp/jwt-nginx` image for the Nginx container in your Docker Compose file.
+   - For Linux-based virtual machines (VMs), use the `ghcr.io/max-lt/nginx-jwt-module:latest` image for the Nginx container in your Docker Compose file.
+
+By following these guidelines, you can prevent CORS issues and ensure that requests from the browser are allowed properly, both in Docker containers and local environments.

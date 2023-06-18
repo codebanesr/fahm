@@ -31,12 +31,24 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+# Detect the CPU architecture
+CPU_ARCH=$(uname -m)
+
+# Set the Docker image based on the CPU architecture
+if [[ $CPU_ARCH == "arm"* ]]; then
+  DOCKER_IMAGE=jlenartjwp/jwt-nginx
+else
+  DOCKER_IMAGE=ghcr.io/max-lt/nginx-jwt-module:latest
+fi
+
+# Export the Docker image variable
+export DOCKER_IMAGE
+
 # SSH into the 'highcompute' server and run the appropriate command
 if [[ $run_b_flag == true ]]; then
   echo "Running 'fahm -b' on 'highcompute' via SSH..."
-  ssh highcompute "fahm -b"
+  ssh highcompute "DOCKER_IMAGE=$DOCKER_IMAGE fahm -b"
 else
   echo "Running 'fahm' on 'highcompute' via SSH..."
-  ssh highcompute "fahm"
+  ssh highcompute "DOCKER_IMAGE=$DOCKER_IMAGE fahm"
 fi
-

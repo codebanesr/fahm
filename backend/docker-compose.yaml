@@ -48,7 +48,7 @@ services:
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt
       - /var/www/certbot:/var/www/certbot
-    command: certonly --webroot --webroot-path=/var/www/certbot --email shanur.cse.nitap@gmail.com --agree-tos --no-eff-email --force-renewal --test-cert -d fahm.applesauce.co.in
+    command: certonly --webroot --webroot-path=/var/www/certbot --email shanur.cse.nitap@gmail.com --agree-tos --no-eff-email --force-renewal -d fahm.applesauce.co.in
     networks:
       - mynetwork
 

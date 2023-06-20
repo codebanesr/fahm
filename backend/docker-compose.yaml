@@ -34,8 +34,8 @@ services:
     container_name: nginx
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - /etc/nginx/certs:/etc/nginx/certs
-      - /var/www/certbot:/var/www/certbot
+      - /etc/letsencrypt/live/fahm.applesauce.co.in/fullchain.pem:/etc/nginx/certs/fullchain.pem:ro
+      - /etc/letsencrypt/live/fahm.applesauce.co.in/privkey.pem:/etc/nginx/certs/privkey.pem:ro
     ports:
       - 80:80
       - 443:443

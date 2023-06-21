@@ -49,6 +49,9 @@ services:
   #   command: certonly --webroot --webroot-path=/var/www/certbot --email shanur.cse.nitap@gmail.com --agree-tos --no-eff-email --force-renewal -d fahm.applesauce.co.in
   #   networks:
   #     - mynetwork
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - nginx
 
 networks:
   mynetwork:

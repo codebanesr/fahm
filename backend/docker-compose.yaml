@@ -6,8 +6,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    # ports:
-    #   - 8080:8080
     env_file:
       - .env
     restart: always
@@ -30,7 +28,7 @@ services:
       - mynetwork
 
   nginx:
-    image: ${DOCKER_IMAGE} # ghcr.io/max-lt/nginx-jwt-module:latest for linux
+    image: nginx
     container_name: nginx
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
@@ -39,7 +37,6 @@ services:
     ports:
       - 80:80
       - 443:443
-    restart: always
     networks:
       - mynetwork
 
@@ -48,9 +45,10 @@ services:
   #   container_name: certbot
   #   volumes:
   #     - /etc/letsencrypt:/etc/letsencrypt
-  #     - ./certbot/conf:/etc/letsencrypt/conf # Optional: customize Certbot configuration
-  #     - ./certbot/www:/var/www/certbot # Optional: store webroot files for challenges
-  #   command: certonly --webroot --webroot-path=/var/www/certbot -d fahm.applesauce.co.in
+  #     - /var/www/certbot:/var/www/certbot
+  #   command: certonly --webroot --webroot-path=/var/www/certbot --email shanur.cse.nitap@gmail.com --agree-tos --no-eff-email --force-renewal -d fahm.applesauce.co.in
+  #   networks:
+  #     - mynetwork
   #   restart: unless-stopped
   #   depends_on:
   #     - nginx

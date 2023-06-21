@@ -29,7 +29,7 @@ export default function Home() {
     messages: [
       {
         message:
-          "Hey, what specific questions do you have about the IPC? I can provide you with the answers you're looking for.",
+          "Hey, what specific questions do you have about the documents, I can help you answer those questions",
         type: 'apiMessage',
       },
     ],

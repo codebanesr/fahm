@@ -9,6 +9,7 @@ import { CompletionService } from './completion/completion.service';
 import { DocumentIngestionModule } from './document-ingestion/document-ingestion.module';
 import { SupabaseService } from './supabase/supabase.service';
 import { MongooseModule } from '@nestjs/mongoose';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { MongooseModule } from '@nestjs/mongoose';
     MongooseModule.forRoot(
       `mongodb+srv://shanurrahman:${process.env.MONGODB_PASSWORD}@knowledgebase.nkwyehj.mongodb.net/?retryWrites=true&w=majority`,
     ),
+    EmailModule,
   ],
   controllers: [AppController, CompletionController],
   providers: [AppService, CompletionService, SupabaseService],

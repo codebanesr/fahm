@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Widget</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body>
+  <div class="container">
+    <div class="chat-box">
+      <div class="chat-box-header">
+        <!-- <button class="toggle-theme-button" onclick="toggleTheme()"> 
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+          </svg>
+        </button> -->
+        <span class="title" id="title">Ask me anything!</span>
+      </div>
+      <div class="messages" id="messages"> </div>
+      <div class="chat-box-footer"> <input type="text" class="message-input" id="messageInput"
+          placeholder="Type your message"> <button class="send-button" id="sendButton"> <svg
+            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"> </path>
+          </svg> </button> 
+      </div>
+    </div>
+  </div>
+  <script src="chat.js"></script>
+</body>
+
+</html>

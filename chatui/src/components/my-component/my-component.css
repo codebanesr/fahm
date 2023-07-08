@@ -1,0 +1,100 @@
+/* chat-app.css */
+
+:host {
+  display: block;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.flex {
+  display: flex;
+}
+
+.space-y-2 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 0.5rem;
+}
+
+.space-x-2 > :not([hidden]) ~ :not([hidden]) {
+  margin-left: 0.5rem;
+}
+
+.p-2 {
+  padding: 0.5rem;
+}
+
+.p-4 {
+  padding: 1rem;
+}
+
+.m-4 {
+  margin: 1rem;
+}
+
+.h-screen {
+  height: 100vh;
+}
+
+.h-8 {
+  height: 2rem;
+}
+
+.w-8 {
+  width: 2rem;
+}
+
+.h-10 {
+  height: 2.5rem;
+}
+
+.w-10 {
+  width: 2.5rem;
+}
+
+.rounded-full {
+  border-radius: 9999px;
+}
+
+.bg-gray-100 {
+  background-color: #F3F4F6;
+}
+
+.bg-gray-200 {
+  background-color: #E5E7EB;
+}
+
+.bg-blue-500 {
+  background-color: #3B82F6;
+}
+
+.text-gray-800 {
+  color: #1F2937;
+}
+
+.text-white {
+  color: #FFFFFF;
+}
+
+.border {
+  border-width: 1px;
+}
+
+.border-gray-200 {
+  border-color: #E5E7EB;
+}
+
+.focus\:outline-none:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}

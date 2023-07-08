@@ -1,4 +1,4 @@
-import { Component, h, State } from '@stencil/core';
+import { Component, h, Prop, State } from '@stencil/core';
 
 export type Message = {
   type: 'apiMessage' | 'userMessage';
@@ -13,6 +13,7 @@ export type Message = {
   shadow: true,
 })
 export class MyComponent {
+  @Prop() endpoint: string = ''; // Input property to store the endpoint URL
   @State() messages: Message[] = [
     {
       type: 'userMessage',
@@ -28,6 +29,20 @@ export class MyComponent {
   @State() currentMessage: Message = null;
 
   @State() inputMessage: string = '';
+
+  callEndpoint() {
+    // Perform the API call to the provided endpoint
+    fetch(this.endpoint)
+      .then(response => response.json())
+      .then(data => {
+        // Handle the response data
+        console.log(data);
+      })
+      .catch(error => {
+        // Handle any errors
+        console.error(error);
+      });
+  }
 
   handleInput(event: Event) {
     this.inputMessage = (event.target as HTMLInputElement).value;

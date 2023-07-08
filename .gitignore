@@ -36,3 +36,4 @@ lerna-debug.log*
 .env
 upload
 docs
+.parcel-cache

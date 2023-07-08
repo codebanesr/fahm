@@ -1,0 +1,137 @@
+{
+  "schemaVersion": "1.0.0",
+  "readme": "",
+  "modules": [
+    {
+      "kind": "javascript-module",
+      "path": "src/FahmChat.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "FahmChat",
+          "members": [
+            {
+              "kind": "field",
+              "name": "messages",
+              "type": {
+                "text": "array"
+              },
+              "default": "[\n    {\n      type: 'userMessage',\n      message: 'Hey there!',\n    },\n    {\n      type: 'apiMessage',\n      message: 'Hi! How can I help you?',\n    },\n    // Add more messages as needed\n  ]"
+            },
+            {
+              "kind": "field",
+              "name": "currentMessage",
+              "type": {
+                "text": "null"
+              },
+              "default": "null"
+            },
+            {
+              "kind": "field",
+              "name": "inputMessage",
+              "type": {
+                "text": "string"
+              },
+              "default": "''"
+            },
+            {
+              "kind": "method",
+              "name": "callEndpoint"
+            },
+            {
+              "kind": "method",
+              "name": "handleInput",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "any"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "handleKeyPress",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "any"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "sendMessage"
+            },
+            {
+              "kind": "field",
+              "name": "endpoint",
+              "type": {
+                "text": "string"
+              },
+              "default": "'https://example.com'",
+              "privacy": "public",
+              "attribute": "endpoint"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "endpoint",
+              "fieldName": "endpoint"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "fahm-chat",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "FahmChat",
+          "declaration": {
+            "name": "FahmChat",
+            "module": "src/FahmChat.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/fahm-chat.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "fahm-chat",
+          "declaration": {
+            "name": "FahmChat",
+            "module": "/src/FahmChat.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/index.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "FahmChat",
+          "declaration": {
+            "name": "FahmChat",
+            "module": "./FahmChat.js"
+          }
+        }
+      ]
+    }
+  ]
+}

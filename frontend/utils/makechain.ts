@@ -1,4 +1,4 @@
-import { OpenAI } from 'langchain/llms/openai';
+import { OpenAI, OpenAIChat } from 'langchain/llms/openai';
 import { PineconeStore } from 'langchain/vectorstores/pinecone';
 import { ConversationalRetrievalQAChain } from 'langchain/chains';
 
@@ -25,8 +25,12 @@ export const makeChain = (vectorstore: PineconeStore) => {
     streaming: true,
   });
 
+  const azureModel = new OpenAIChat({
+    modelName: 'gpt-35-turbo',
+  });
+
   const chain = ConversationalRetrievalQAChain.fromLLM(
-    model,
+    azureModel,
     vectorstore.asRetriever(),
     {
       qaTemplate: QA_PROMPT,

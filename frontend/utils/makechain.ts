@@ -26,13 +26,7 @@ export const makeChain = (vectorstore: PineconeStore) => {
   });
 
   const azureModel = new OpenAIChat({
-    // azureOpenAIBasePath: 'https://shanurrahman.openai.azure.com',
-    // azureOpenAIApiInstanceName: 'shanurrahman',
-    // azureOpenAIApiCompletionsDeploymentName: 'emailclassifier',
-    // azureOpenAIApiEmbeddingsDeploymentName: 'emailclassifierembedding',
     modelName: 'gpt-35-turbo',
-    // azureOpenAIApiKey: '4fa9e8f812314c22ad6fad16aec0763b',
-    // azureOpenAIApiVersion: '2023-03-15-preview'
   });
 
   const chain = ConversationalRetrievalQAChain.fromLLM(

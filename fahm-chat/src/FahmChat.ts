@@ -1,5 +1,5 @@
 import { html, css, LitElement } from 'lit';
-import { property } from 'lit/decorators.js';
+import { property, state } from 'lit/decorators.js';
 
 export class FahmChat extends LitElement {
   static styles = css`
@@ -216,21 +216,13 @@ export class FahmChat extends LitElement {
     endpoint: { type: String },
   };
 
-  messages = [
-    {
-      type: 'userMessage',
-      message: 'Hey there!',
-    },
+  @state() messages = [
     {
       type: 'apiMessage',
       message: 'Hi! How can I help you?',
     },
-    // Add more messages as needed
   ];
-
-  currentMessage = null;
-
-  inputMessage = '';
+  @state() inputMessage = '';
 
   callEndpoint() {
     // Perform the API call to the provided endpoint
@@ -246,18 +238,15 @@ export class FahmChat extends LitElement {
       });
   }
 
-  handleInput(event: any) {
-    this.inputMessage = event.target.value;
-  }
-
   handleKeyPress(event: any) {
+    this.inputMessage = event.target.value;
+    
     if (event.key === 'Enter') {
       this.sendMessage();
     }
   }
 
   sendMessage() {
-    console.log(this.inputMessage);
     if (this.inputMessage.trim() === '') {
       return;
     }
@@ -272,6 +261,8 @@ export class FahmChat extends LitElement {
     this.messages = [...this.messages, newMessage];
     this.inputMessage = '';
   }
+
+  // @input=${(event: any) => this.handleInput(event)}
 
   @property({ type: String }) endpoint = 'https://example.com';
   render() {
@@ -314,7 +305,6 @@ export class FahmChat extends LitElement {
               placeholder="Type a message"
               class="flex-grow px-4 py-2 rounded-full bg-white border border-gray-200 focus:outline-none"
               .value=${this.inputMessage}
-              @input=${(event: any) => this.handleInput(event)}
               @keypress=${(event: any) => this.handleKeyPress(event)}
             />
             <button

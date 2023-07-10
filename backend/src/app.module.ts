@@ -9,6 +9,8 @@ import { CompletionService } from './completion/completion.service';
 import { DocumentIngestionModule } from './document-ingestion/document-ingestion.module';
 import { SupabaseService } from './supabase/supabase.service';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ChatController } from './chat/chat.controller';
+import { ChatService } from './chat/chat.service';
 
 @Module({
   imports: [
@@ -25,7 +27,7 @@ import { MongooseModule } from '@nestjs/mongoose';
       `mongodb+srv://shanurrahman:${process.env.MONGODB_PASSWORD}@knowledgebase.nkwyehj.mongodb.net/?retryWrites=true&w=majority`,
     ),
   ],
-  controllers: [AppController, CompletionController],
-  providers: [AppService, CompletionService, SupabaseService],
+  controllers: [AppController, CompletionController, ChatController],
+  providers: [AppService, CompletionService, SupabaseService, ChatService],
 })
 export class AppModule {}

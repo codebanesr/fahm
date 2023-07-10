@@ -1,14 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
-import { PineconeStore } from 'langchain/vectorstores/pinecone';
-import { makeChain } from '@/utils/makechain';
-import { pinecone } from '@/utils/pinecone-client';
-import { PINECONE_INDEX_NAME } from '@/config/pinecone';
-
-function stringToBase64(input: string): string {
-  const buffer = Buffer.from(input, 'utf8');
-  return buffer.toString('base64');
-}
 
 export default async function handler(
   req: NextApiRequest,
@@ -16,48 +6,36 @@ export default async function handler(
 ) {
   const { question, history, user_dir } = req.body;
 
-  console.log({question, history, user_dir});
-
   //only accept post requests
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
 
-  if (!question) {
-    return res.status(400).json({ message: 'No question in the request' });
-  }
-  // OpenAI recommends replacing newlines with spaces for best results
-  const sanitizedQuestion = question.trim().replaceAll('\n', ' ');
-
+  const url = 'http://localhost:8080/_api/chat';
+  const headers = {
+    accept: '*/*',
+    'Content-Type': 'application/json',
+  };
+  const body = JSON.stringify({
+    question,
+    history,
+    user_dir,
+  });
   try {
-    const index = pinecone.Index(PINECONE_INDEX_NAME);
-
-    /* create vectorstore*/
-    const vectorStore = await PineconeStore.fromExistingIndex(
-      new OpenAIEmbeddings({}),
-      {
-        pineconeIndex: index,
-        textKey: 'text',
-        namespace: process.env.PINECONE_NS,
-        filter: {
-          search_context: { $in: [
-            stringToBase64(user_dir), 
-            stringToBase64('master_dir')
-          ] },
-        },
-      },
-    );
-
-    //create chain
-    const chain = makeChain(vectorStore);
-    //Ask a question using chat history
-    const response = await chain.call({
-      question: sanitizedQuestion,
-      chat_history: history || [],
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: headers,
+      body: body,
     });
 
-    res.status(200).json(response);
+    if (!response.ok) {
+      throw new Error('Request failed with status: ' + response.status);
+    }
+
+    const data = await response.json();
+
+    res.status(200).json(data);
   } catch (error: any) {
     console.log('error', error);
     res.status(500).json({ error: error.message || 'Something went wrong' });

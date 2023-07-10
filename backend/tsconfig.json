@@ -1,5 +1,11 @@
 {
   "compilerOptions": {
+    // Using newer JS syntax like optional chaining (?.), nullish coalescing (??), etc.
+    // Tree-shaking unused code may be more effective, leading to smaller bundle sizes.
+    "lib": [
+      "es2021"
+    ],
+    // --
     "module": "commonjs",
     "declaration": true,
     "removeComments": true,

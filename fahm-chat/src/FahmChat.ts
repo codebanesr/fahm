@@ -1,6 +1,11 @@
 import { html, css, LitElement } from 'lit';
 import { property, state } from 'lit/decorators.js';
 
+interface ChatResponse {
+  text: string;
+  sourceDocuments: Array<{ [key: string]: any }>; // Adjust the type accordingly
+}
+
 export class FahmChat extends LitElement {
   static styles = css`
     :host {
@@ -214,39 +219,55 @@ export class FahmChat extends LitElement {
 
   static properties = {
     endpoint: { type: String },
+    apikey: { type: String },
   };
 
-  @state() messages = [
-    {
-      type: 'apiMessage',
-      message: 'Hi! How can I help you?',
-    },
-  ];
+  @state() messages: { type: string; message: string }[] = [];
   @state() inputMessage = '';
 
-  callEndpoint() {
-    // Perform the API call to the provided endpoint
-    fetch(this.endpoint)
-      .then((response) => response.json())
-      .then((data) => {
-        // Handle the response data
-        console.log(data);
-      })
-      .catch((error) => {
-        // Handle any errors
-        console.error(error);
+  async makeChatRequest() {
+    const headers = {
+      accept: '*/*',
+      'Content-Type': 'application/json',
+    };
+    const body = JSON.stringify({
+      question: this.inputMessage,
+      history: this.messages.map((m) => m.message),
+      user_dir: 'yourapikeyhere',
+    });
+
+    try {
+      const response = await fetch(this.endpoint, {
+        method: 'POST',
+        headers: headers,
+        body: body,
       });
+
+      if (!response.ok) {
+        throw new Error('Request failed with status: ' + response.status);
+      }
+
+      const data: ChatResponse = await response.json();
+      this.messages = [
+        ...this.messages,
+        { message: data.text, type: 'llmResponse' },
+      ];
+      // Process the response data here
+    } catch (error) {
+      // Handle any errors that occurred during the request
+      console.error(error);
+    }
   }
 
   handleKeyPress(event: any) {
     this.inputMessage = event.target.value;
-    
+
     if (event.key === 'Enter') {
       this.sendMessage();
     }
   }
 
-  sendMessage() {
+  async sendMessage() {
     if (this.inputMessage.trim() === '') {
       return;
     }
@@ -259,12 +280,15 @@ export class FahmChat extends LitElement {
     };
 
     this.messages = [...this.messages, newMessage];
+
+    await this.makeChatRequest();
     this.inputMessage = '';
   }
 
   // @input=${(event: any) => this.handleInput(event)}
 
   @property({ type: String }) endpoint = 'https://example.com';
+  @property({ type: String }) apikey = 'yoursecretapikey';
   render() {
     return html`
       <div class="flex flex-col h-screen">

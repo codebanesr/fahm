@@ -36,107 +36,161 @@ To run a local development server that serves the basic demo located in `demo/in
 
 ----
 
-## Framework specific docs
-Sure! Here's an example README file for using the 'fahm-chat' component with Angular and React:
+# Framework specific docs
 
-# Fahm Chat Component
+The `<fahm-chat>` component provides an easy way to integrate a chat interface into your application. 
 
-This is a reusable chat component called 'fahm-chat' that can be used in Angular and React applications.
+However, some additional configuration may be required depending on your specific framework and design needs. Please refer to the platform-specific documentation below for details on integrating FahmChat into different frameworks. Some tweaking may be necessary to adapt FahmChat to your particular framework or use case.
 
-## Usage in Angular
+The component documentation below provides examples for React, Angular, Vue, Svelte and vanilla JS, but these are just a starting point. Make sure to consult your framework's documentation for any specific requirements when adding custom Web Components like FahmChat.
 
-1. Install the package:
+Some additional styling or layout adjustments may be needed to seamlessly integrate the chat UI into your existing application. The component provides the core chat functionality, but full integration will depend on your specific implementation.
 
-```bash
-npm install fahm-chat
+## Usage
+
+The chat component takes two properties:
+
+- `endpoint` - The API endpoint to connect to for chat  
+- `apikey` - Your API key for authentication
+
+Example:
+
+```html
+<fahm-chat
+  endpoint="http://localhost:8080/_api/chat"
+  apikey="yoursecretapikey">
+</fahm-chat>
 ```
 
-2. Import the 'fahm-chat' component and register it as a custom element in your Angular component file:
+### React
 
-```typescript
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { FahmChat } from 'fahm-chat';
+Install the component:
 
-@Component({
-  // Component metadata...
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
-})
-export class MyComponent {
-  constructor() {
-    customElements.define('fahm-chat', FahmChat);
-  }
+```bash 
+npm install @yourname/fahm-chat
+```
+
+Use in your component:
+
+```jsx
+import FahmChat from '@yourname/fahm-chat';
+
+function App() {
+  return (
+    <FahmChat
+      endpoint="http://localhost:8080/_api/chat"  
+      apikey="yoursecretapikey"
+    />
+  );
 }
 ```
 
-3. Use the 'fahm-chat' component in your Angular template:
+### Angular
 
-```html
-<fahm-chat></fahm-chat>
+Install:
+
+```
+npm install @yourname/fahm-chat
 ```
 
-4. Make sure to add the necessary styles and assets required by the 'fahm-chat' component to your Angular project.
+Import and use:
 
-## Usage in React
+```typescript
+import { FahmChat } from '@yourname/fahm-chat';
 
-1. Install the package:
+@Component({/* */})
+export class AppComponent {
+
+  endpoint = 'http://localhost:8080/_api/chat';
+  apikey = 'yoursecretapikey';
+
+  render() {
+    return (
+      <fahm-chat
+        [endpoint]="endpoint"
+        [apikey]="apikey">
+      </fahm-chat>
+    );
+  }
+
+}
+```
+
+### Vue
+
+Install:
 
 ```bash
-npm install fahm-chat
+npm install @yourname/fahm-chat
 ```
 
-2. Import the 'fahm-chat' component and register it as a custom element in your React component file:
+Use in component:
 
-```jsx
-import React, { useEffect } from 'react';
-import { FahmChat } from 'fahm-chat';
+```vue
+<script>
+import FahmChat from '@yourname/fahm-chat';
 
-const MyComponent = () => {
-  useEffect(() => {
-    customElements.define('fahm-chat', FahmChat);
-  }, []);
+export default {
+  components: {
+    FahmChat
+  },
+  data() {
+    return {
+      endpoint: 'http://localhost:8080/_api/chat',
+      apikey: 'yoursecretapikey'
+    }
+  }
+}  
+</script>
 
-  return <fahm-chat></fahm-chat>;
-};
-
-export default MyComponent;
+<template>
+  <FahmChat 
+    :endpoint="endpoint"
+    :apikey="apikey"
+  />
+</template>
 ```
 
-3. Use the 'fahm-chat' component in your React component.
+### Svelte
 
-4. Make sure to add the necessary styles and assets required by the 'fahm-chat' component to your React project.
+Install:
 
-## Customization
+```bash  
+npm install @yourname/fahm-chat
+```
 
-The 'fahm-chat' component supports customization through properties and events. Refer to the documentation for the available options and usage details.
+Use in component:
 
-## Development
+```svelte
+<script>
+  import FahmChat from '@yourname/fahm-chat';
 
-To contribute or make modifications to the 'fahm-chat' component, follow these steps:
+  let endpoint = 'http://localhost:8080/_api/chat';
+  let apikey = 'yoursecretapikey'; 
+</script>
 
-1. Clone the repository:
+<FahmChat {endpoint} {apikey}/>
+```
+
+### Vanilla JS
+
+Install:
 
 ```bash
-git clone https://github.com/your-repo/fahm-chat.git
+npm install @yourname/fahm-chat
 ```
 
-2. Install dependencies:
+Use:
 
-```bash
-npm install
+```js
+import { FahmChat } from '@yourname/fahm-chat';
+
+const chat = new FahmChat();
+
+chat.endpoint = 'http://localhost:8080/_api/chat';
+chat.apikey = 'yoursecretapikey';
+
+document.body.appendChild(chat);
 ```
 
-3. Make the necessary modifications to the component code.
-
-4. Build the component:
-
-```bash
-npm run build
-```
-
-5. Test the component and ensure it works as expected.
-
-6. Submit a pull request with your changes.
-
-## License
-
-This component is released under the [MIT License](https://opensource.org/licenses/MIT).
+Let me know if you need any other updates to the documentation!

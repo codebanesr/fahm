@@ -3,13 +3,17 @@
   "description": "Webcomponent fahm-chat following open-wc recommendations",
   "license": "MIT",
   "author": "fahm-chat",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "type": "module",
   "main": "dist/src/index.js",
   "module": "dist/src/index.js",
   "exports": {
     ".": "./dist/src/index.js",
     "./fahm-chat.js": "./dist/src/fahm-chat.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shanurrahman/fahm/tree/main/fahm-chat"
   },
   "scripts": {
     "analyze": "cem analyze --litelement",

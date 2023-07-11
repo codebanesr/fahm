@@ -286,6 +286,9 @@ export class FahmChat extends LitElement {
   @property() showFileUpload = true;
   render() {
     return html`
+      ${this.showFileUpload
+        ? html` <input type="file" @change=${this.handleFileUpload} /> `
+        : ''}
       <div class="flex flex-col h-screen">
         <div class="flex-grow">
           <!-- Chat messages -->

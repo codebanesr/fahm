@@ -285,12 +285,44 @@ export class FahmChat extends LitElement {
     this.inputMessage = '';
   }
 
-  // @input=${(event: any) => this.handleInput(event)}
+  async handleFileSelect(e: Event) {
+    const files = (e.target as HTMLInputElement).files;
+    if (!files || files.length === 0) {
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', files[0]);
+
+    try {
+      const response = await fetch('/upload', {
+        method: 'POST',
+
+        body: formData,
+
+        headers: {
+          'fahm-api-key': 'YOUR_API_KEY',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Network error');
+      }
+
+      console.log('Upload successful');
+    } catch (error) {
+      console.error('Upload failed:', error);
+    }
+  }
 
   @property({ type: String }) endpoint = 'http://localhost:8080/_api/chat';
   @property({ type: String }) apikey = 'yoursecretapikey';
+  @property() showFileUpload = false;
   render() {
     return html`
+      ${this.showFileUpload
+        ? html` <input type="file" @change=${this.handleFileSelect} /> `
+        : ''}
       <div class="flex flex-col h-screen">
         <div class="flex-grow">
           <!-- Chat messages -->

@@ -15,15 +15,13 @@ export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
   @Post()
-  @ApiBody({ type: ChatDto })
-  async chat(@Body('body') body: ChatDto) {
+  async chat(@Body() body: ChatDto) {
     const { question, history, user_dir } = body;
     return this.chatService.getAIResponse(question, user_dir, history);
   }
 
   @Post('machine')
-  @ApiBody({ type: ChatDto })
-  async machineChat(@Req() request, @Body('body') body: ChatDto) {
+  async machineChat(@Req() request, @Body() body: ChatDto) {
     const { question, history } = body;
 
     // Extract the 'fahm-api-token' header from the request

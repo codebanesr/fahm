@@ -33,12 +33,13 @@ export class ChatService implements OnModuleInit {
       },
     );
 
+    console.log({ history });
     // Create chain
     const chain = makeChain(vectorStore);
     // Ask a question using chat history
     const response = await chain.call({
       question: sanitizedQuestion,
-      chat_history: history || [],
+      chat_history: history.join('\n') || [],
     });
 
     return response;

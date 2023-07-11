@@ -250,7 +250,7 @@ export class FahmChat extends LitElement {
       const data: ChatResponse = await response.json();
       this.messages = [
         ...this.messages,
-        { message: data.text, type: 'llmResponse' },
+        { message: data.text, type: 'Assistant' },
       ];
       // Process the response data here
     } catch (error) {
@@ -273,7 +273,7 @@ export class FahmChat extends LitElement {
     }
 
     const newMessage = {
-      type: 'userMessage',
+      type: 'Human',
       message: this.inputMessage,
       isStreaming: false,
       sourceDocs: [],
@@ -287,7 +287,7 @@ export class FahmChat extends LitElement {
 
   // @input=${(event: any) => this.handleInput(event)}
 
-  @property({ type: String }) endpoint = 'https://example.com';
+  @property({ type: String }) endpoint = 'http://localhost:8080/_api/chat';
   @property({ type: String }) apikey = 'yoursecretapikey';
   render() {
     return html`

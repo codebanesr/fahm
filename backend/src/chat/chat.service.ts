@@ -1,5 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { PineconeClient } from '@pinecone-database/pinecone';
+import { generateApiKey } from 'generate-api-key';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { PineconeStore } from 'langchain/vectorstores/pinecone';
 import { makeChain } from 'src/utils/makechain';
@@ -43,5 +44,14 @@ export class ChatService implements OnModuleInit {
     });
 
     return response;
+  }
+
+  async generateApiKey(username: string) {
+    generateApiKey({
+      method: 'uuidv5',
+      name: 'production app',
+      namespace: '0f3819f3-b417-4c4c-b674-853473800265',
+      prefix: username.slice(0, 5),
+    });
   }
 }

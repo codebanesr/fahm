@@ -32,6 +32,7 @@
     "@types/multer": "^1.4.7",
     "axios": "^1.4.0",
     "class-validator": "^0.14.0",
+    "generate-api-key": "^1.0.2",
     "langchain": "^0.0.106",
     "llms-client": "^2.3.8",
     "mongoose": "^7.3.0",

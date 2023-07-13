@@ -5,9 +5,10 @@ import {
   Req,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ChatService } from './chat.service';
 import { ChatDto } from './dtos/chat.dto';
+import { CreateApiKeyDto } from './dtos/create-api-key.dto';
 
 @ApiTags('chat')
 @Controller('chat')
@@ -33,5 +34,21 @@ export class ChatController {
     }
 
     return this.chatService.getAIResponse(question, token, history);
+  }
+
+  @Post()
+  @ApiOperation({
+    summary: 'Generate API Key',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'The API key was generated successfully.',
+  })
+  async generate(@Body() body: CreateApiKeyDto) {
+    const { username } = body;
+    const apiKey = await this.chatService.generateApiKey(username);
+    return {
+      key: apiKey,
+    };
   }
 }

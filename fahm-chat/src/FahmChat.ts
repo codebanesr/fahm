@@ -264,7 +264,7 @@ export class FahmChat extends LitElement {
     try {
       const data = await fileUploadHelper(e, '/upload');
       this.dispatchEvent(
-        new CustomEvent('fileUploaded', {
+        new CustomEvent('fileUploadSuccess', {
           detail: {
             data,
           },
@@ -272,7 +272,7 @@ export class FahmChat extends LitElement {
       );
     } catch (e) {
       this.dispatchEvent(
-        new CustomEvent('fileUploaded', {
+        new CustomEvent('fileUploadFailed', {
           detail: {
             error: e,
           },
@@ -286,9 +286,6 @@ export class FahmChat extends LitElement {
   @property() showFileUpload = true;
   render() {
     return html`
-      ${this.showFileUpload
-        ? html` <input type="file" @change=${this.handleFileUpload} /> `
-        : ''}
       <div class="flex flex-col h-screen">
         <div class="flex-grow">
           <!-- Chat messages -->

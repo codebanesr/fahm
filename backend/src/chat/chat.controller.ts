@@ -5,7 +5,7 @@ import {
   Req,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { ChatService } from './chat.service';
 import { ChatDto } from './dtos/chat.dto';
 

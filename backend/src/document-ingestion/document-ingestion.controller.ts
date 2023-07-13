@@ -45,7 +45,10 @@ export class DocumentIngestionController {
     @UploadedFile() file: Express.Multer.File,
     @Body() body: DocumentIngestionDto,
   ) {
-    return this.documentIngestionService.ingestUserDocuments(file, body.email);
+    return this.documentIngestionService.ingestUserDocuments(
+      file,
+      body.identifier,
+    );
   }
 
   @ApiOperation({ summary: 'Remove documents by filter' })

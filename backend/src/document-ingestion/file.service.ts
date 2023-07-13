@@ -18,6 +18,10 @@ export class FileService {
     return this.fileModel.deleteOne({ file_base64 });
   }
 
+  async removeFilesForApiKey(apiKey: string) {
+    return this.fileModel.deleteMany({ identifier: apiKey });
+  }
+
   async create(file: Omit<FileMeta, keyof Document>): Promise<FileMeta> {
     const newFile = new this.fileModel(file);
     return newFile.save();

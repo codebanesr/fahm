@@ -1,6 +1,8 @@
 import {
   Body,
   Controller,
+  Delete,
+  Param,
   Post,
   Req,
   UnauthorizedException,
@@ -49,6 +51,23 @@ export class ChatController {
     const apiKey = await this.chatService.generateApiKey(username);
     return {
       key: apiKey,
+      description: 'The API key was generated successfully.',
+    };
+  }
+
+  @Delete(':key')
+  @ApiOperation({
+    summary: 'Delete API Key',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'The API key was deleted successfully',
+  })
+  async delete(@Param('key') key: string) {
+    await this.chatService.deleteApiKey(key);
+
+    return {
+      message: 'API key deleted successfully',
     };
   }
 }

@@ -5,13 +5,17 @@ import { DocumentIngestionService } from './document-ingestion.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { FileSchema } from './schema/file.schema';
 import { FileService } from './file.service';
+import { ApiKeySchema } from 'src/chat/schema/api-key.schema';
 
 @Module({
   controllers: [DocumentIngestionController],
-  exports: [],
+  exports: [DocumentIngestionService],
   imports: [
     VectorDBModule,
-    MongooseModule.forFeature([{ name: 'File', schema: FileSchema }]),
+    MongooseModule.forFeature([
+      { name: 'File', schema: FileSchema },
+      { name: 'ApiKey', schema: ApiKeySchema },
+    ]),
   ],
   providers: [DocumentIngestionService, FileService],
 })

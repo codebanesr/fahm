@@ -17,6 +17,16 @@ import { CreateApiKeyDto } from './dtos/create-api-key.dto';
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
+  @ApiOperation({
+    summary: 'Get AI chat response',
+    description:
+      'Returns an AI generated response for the provided question and conversation history',
+  })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'AI response text',
+  //   type: ChatResponse,
+  // })
   @Post()
   async chat(@Body() body: ChatDto) {
     const { question, history, user_dir } = body;
@@ -28,7 +38,7 @@ export class ChatController {
     const { question, history } = body;
 
     // Extract the 'fahm-api-token' header from the request
-    const token = request.headers['fahm-api-token'];
+    const token = request.headers['x_api_token'];
 
     // Check if the token exists
     if (!token) {

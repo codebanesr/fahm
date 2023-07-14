@@ -9,12 +9,14 @@ import { FileService } from './file.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { ApiKey } from 'src/chat/schema/api-key.schema';
 import { Model } from 'mongoose';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class DocumentIngestionService {
   constructor(
     @Inject('VECTOR_DB_CLIENT') private readonly vectorDbClient: VectorDBClient,
     private readonly fileService: FileService,
+    private readonly usersService: UsersService,
     @InjectModel(ApiKey.name) private apiKeyModel: Model<ApiKey>,
   ) {}
 
@@ -23,8 +25,9 @@ export class DocumentIngestionService {
     return buffer.toString('base64');
   }
 
-  async getAllUploadedFiles(email: string) {
-    return this.fileService.findAll({ email });
+  async getAllUploadedFiles(identifier: string) {
+    const result = await this.fileService.findAll({ identifier });
+    return result;
   }
 
   async removeDocumentsByFilter(
@@ -58,9 +61,16 @@ export class DocumentIngestionService {
 
     const exists = await this.apiKeyModel.exists({ key: identifier });
     if (!exists?._id) {
-      throw new BadRequestException(
-        'This api key is not valid, please create one from the dashboard',
-      );
+      // if user is using the playground, he doesn't need an api key.
+      // In this case we only verify if the user is registered.
+      const result = await this.usersService.checkEmailExists(identifier);
+
+      console.log({ result });
+      if (!result) {
+        throw new BadRequestException(
+          'This api key is not valid, please create one from the dashboard',
+        );
+      }
     }
 
     const search_context = identifier

@@ -13,6 +13,10 @@ const Header = () => {
     router.push('/api/auth/logout');
   };
 
+  function handleApiKeys(): void {
+    router.push('api-key-management')
+  }
+
   return (
     <header className="bg-gray-800 text-white py-4 px-6 flex justify-between items-center">
       <h1 className="text-lg font-bold">Companion</h1>
@@ -40,6 +44,14 @@ const Header = () => {
               onClick={handleLogout}
             >
               Logout
+            </a>
+
+            <a
+              href="javascript:void(0)"
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              onClick={handleApiKeys}
+            >
+              Api Keys
             </a>
           </div>
         )}

@@ -1,12 +1,10 @@
-import { ApiKey } from '@/types/api-key';
-
 export async function performAPICall(
-  url: string,
+    endpoint: string,
   method: string,
   body?: any,
-): Promise<ApiKey | undefined> {
+): Promise<any> {
   try {
-    const response = await fetch(url, {
+    const response = await fetch(`${process.env.API_URL}/${endpoint}`, {
       method,
       headers: {
         'Content-Type': 'application/json',

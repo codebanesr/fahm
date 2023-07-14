@@ -2,6 +2,7 @@ import ApiKeyModal from '@/components/ui/create-api-key.modal';
 import Header from '@/components/ui/header';
 import { ApiKey } from '@/types/api-key';
 import { performAPICall } from '@/utils/perform-api-call';
+import { useUser } from '@auth0/nextjs-auth0/client';
 import { useEffect, useState } from 'react';
 
 export default function ApiKeys() {
@@ -12,9 +13,10 @@ export default function ApiKeys() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const data = await performAPICall('/api/keys', 'GET');
+        const data = await performAPICall(`chat/keys/${email}`, 'GET');
         if (data) {
-          setTableData([data]);
+          console.log({ data });
+          setTableData(data);
         }
       } catch (error) {
         console.error(error);
@@ -31,7 +33,7 @@ export default function ApiKeys() {
 
   async function switchApiState(row: ApiKey): Promise<void> {
     const updatedRow = { ...row, enabled: !row.enabled };
-    await performAPICall(`/api/keys/${row.key}`, 'PUT', updatedRow);
+    await performAPICall(`chat/key/${row.key}`, 'PUT', updatedRow);
 
     // Update the state to reflect the changes
     setTableData((prevTableData) =>
@@ -39,8 +41,12 @@ export default function ApiKeys() {
     );
   }
 
+  const email = useUser().user?.email;
   async function handleCreate(keyName: string): Promise<void> {
-    const row = await performAPICall('/api/keys', 'POST', { keyName });
+    const row = await performAPICall('chat/key', 'POST', {
+      keyName,
+      username: email,
+    });
     if (row) {
       setTableData((prevTableData) => [...prevTableData, row]);
     }

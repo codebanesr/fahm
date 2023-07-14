@@ -19,7 +19,7 @@ const Header = () => {
 
   return (
     <header className="bg-gray-800 text-white py-4 px-6 flex justify-between items-center">
-      <h1 className="text-lg font-bold">Companion</h1>
+      <h1 className="text-lg font-bold">FAHM</h1>
 
       <div className="relative">
         <button

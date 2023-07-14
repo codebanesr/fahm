@@ -11,6 +11,7 @@ import { PINECONE_INDEX_NAME } from 'src/utils/pinecone/pinecone';
 import { initPinecone } from 'src/utils/pinecone/pinecone-client';
 import { stringToBase64 } from 'src/utils/string2base64';
 import { ApiKey } from './schema/api-key.schema';
+import { UpdateApiDto } from './dtos/update-api.dto';
 
 @Injectable()
 export class ChatService implements OnModuleInit {
@@ -54,24 +55,25 @@ export class ChatService implements OnModuleInit {
     return response;
   }
 
-  async generateApiKey(username: string) {
-    const key = generateApiKey({
-      method: 'uuidv5',
-      name: 'production app',
-      namespace: '0f3819f3-b417-4c4c-b674-853473800265',
+  async generateApiKey(username: string, keyName: string) {
+    const apiKey = generateApiKey({
+      method: 'bytes',
       prefix: username.slice(0, 5),
     });
 
     const now = new Date();
-    return this.apiKeyModel.create({
-      key,
-      userId: username,
-      name: username,
+    await this.apiKeyModel.create({
+      apiKey,
+      key: keyName,
       usageCount: 0,
-      requestLimit: 20,
-      createdAt: now,
-      expiresAt: now.setMonth(now.getMonth() + 2),
+      requestLimit: 2000,
+      startDate: now,
+      endDate: now.setMonth(now.getMonth() + 2),
+      enabled: true,
+      userId: username,
     });
+
+    return this.apiKeyModel.find({ userId: username });
   }
 
   async deleteApiKey(key: string) {
@@ -81,5 +83,13 @@ export class ChatService implements OnModuleInit {
     return {
       message: 'API key deleted successfully',
     };
+  }
+
+  async listKeys(userId: string) {
+    return this.apiKeyModel.find({ userId }, { userId: 0, _id: 0 });
+  }
+
+  async updateApiKey(key: string, updateApiDto: UpdateApiDto) {
+    return this.apiKeyModel.findOneAndUpdate({ key }, { $set: updateApiDto });
   }
 }

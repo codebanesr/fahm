@@ -2,8 +2,10 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Post,
+  Put,
   Req,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -11,6 +13,8 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ChatService } from './chat.service';
 import { ChatDto } from './dtos/chat.dto';
 import { CreateApiKeyDto } from './dtos/create-api-key.dto';
+import { ApiKey } from './schema/api-key.schema';
+import { UpdateApiDto } from './dtos/update-api.dto';
 
 @ApiTags('chat')
 @Controller('chat')
@@ -48,7 +52,7 @@ export class ChatController {
     return this.chatService.getAIResponse(question, token, history);
   }
 
-  @Post()
+  @Post('key')
   @ApiOperation({
     summary: 'Generate API Key',
   })
@@ -57,12 +61,8 @@ export class ChatController {
     description: 'The API key was generated successfully.',
   })
   async generate(@Body() body: CreateApiKeyDto) {
-    const { username } = body;
-    const apiKey = await this.chatService.generateApiKey(username);
-    return {
-      key: apiKey,
-      description: 'The API key was generated successfully.',
-    };
+    const { keyName, username } = body;
+    return this.chatService.generateApiKey(username, keyName);
   }
 
   @Delete(':key')
@@ -79,5 +79,30 @@ export class ChatController {
     return {
       message: 'API key deleted successfully',
     };
+  }
+
+  @Get('keys/:userId')
+  @ApiOperation({
+    summary: 'Get All API Keys',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Retrieved all API keys successfully',
+  })
+  async getAllKeys(@Param('userId') userId: string) {
+    return this.chatService.listKeys(userId);
+  }
+
+  @ApiResponse({
+    status: 200,
+    description: 'The api key was upserted successfully',
+    type: ApiKey,
+  })
+  @ApiOperation({
+    summary: 'Update an api user',
+  })
+  @Put('key/:key')
+  updateApiKey(@Param('key') key: string, @Body() updateApiDto: UpdateApiDto) {
+    return this.chatService.updateApiKey(key, updateApiDto);
   }
 }

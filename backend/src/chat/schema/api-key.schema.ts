@@ -4,13 +4,13 @@ import { Document } from 'mongoose';
 @Schema()
 export class ApiKey extends Document {
   @Prop({ required: true, unique: true })
-  key: string;
+  apiKey: string;
 
   @Prop({ required: true })
   userId: string;
 
   @Prop({ required: true })
-  name: string;
+  key: string;
 
   @Prop({ required: true, default: 0 })
   usageCount: number;
@@ -19,10 +19,13 @@ export class ApiKey extends Document {
   requestLimit: number;
 
   @Prop({ required: true })
-  createdAt: Date;
+  startDate: Date;
 
   @Prop({ required: true })
-  expiresAt: Date;
+  endDate: Date;
+
+  @Prop({ required: true })
+  enabled: boolean;
 }
 
 export const ApiKeySchema = SchemaFactory.createForClass(ApiKey);

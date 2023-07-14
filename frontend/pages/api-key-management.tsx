@@ -1,50 +1,57 @@
-import Modal from '@/components/ui/create-api-key.modal';
+import ApiKeyModal from '@/components/ui/create-api-key.modal';
 import Header from '@/components/ui/header';
-import { useState } from 'react';
-import { AiOutlinePlus } from 'react-icons/ai';
-import { GoRadioTower, GoRocket } from 'react-icons/go';
-import { HiOutlineLightBulb } from 'react-icons/hi';
-
-interface ApiKey {
-  id: string;
-  name: string;
-  key: string;
-}
+import { ApiKey } from '@/types/api-key';
+import { performAPICall } from '@/utils/perform-api-call';
+import { useEffect, useState } from 'react';
 
 export default function ApiKeys() {
-  const [deleteKey, setDeleteKey] = useState<ApiKey | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const [apiKeys, setApiKeys] = useState<ApiKey[]>([
-    { id: '1', name: 'Default', key: 'default123' },
-    { id: '2', name: 'Payments', key: 'payments456' },
-  ]);
+  const [tableData, setTableData] = useState<ApiKey[]>([]);
 
-  const [newName, setNewName] = useState('');
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const data = await performAPICall('/api/keys', 'GET');
+        if (data) {
+          setTableData([data]);
+        }
+      } catch (error) {
+        console.error(error);
+        // Handle the error or show an error message to the user
+      }
+    }
 
-  function handleDelete(id: string) {
-    setApiKeys(apiKeys.filter((key) => key.id !== id));
-  }
+    fetchData();
+  }, []);
 
-  function handleAddKey() {
-    const newKey = {
-      id: crypto.randomUUID(),
-      name: newName,
-      key: crypto.randomUUID(),
-    };
-
-    setApiKeys([...apiKeys, newKey]);
-    setNewName('');
-  }
-
-  const handleCreate = (name: string) => {
-    console.log(name);
+  const onModalCancel = () => {
+    setIsModalVisible(false);
   };
 
+  async function switchApiState(row: ApiKey): Promise<void> {
+    const updatedRow = { ...row, enabled: !row.enabled };
+    await performAPICall(`/api/keys/${row.key}`, 'PUT', updatedRow);
+
+    // Update the state to reflect the changes
+    setTableData((prevTableData) =>
+      prevTableData.map((item) => (item.key === row.key ? updatedRow : item)),
+    );
+  }
+
+  async function handleCreate(keyName: string): Promise<void> {
+    const row = await performAPICall('/api/keys', 'POST', { keyName });
+    if (row) {
+      setTableData((prevTableData) => [...prevTableData, row]);
+    }
+  }
 
   return (
     <div>
       <Header />
-      <Modal onSubmit={handleCreate} /> 
+      {isModalVisible && (
+        <ApiKeyModal onSubmit={handleCreate} onCancel={onModalCancel} />
+      )}
       <main className="flex flex-grow min-h-0 w-full overflow-auto">
         <div className="flex-grow w-full overflow-scroll">
           <div className="flex flex-col p-6 max-w-4xl mx-auto h-full">
@@ -90,13 +97,13 @@ export default function ApiKeys() {
                       </svg>
                       <div className="ml-3 flex-1 flex items-center">
                         <p className="text-normal text-stone-700">
-                          Use Claude in commercial applications
+                          Use Fahm in commercial applications
                         </p>
                       </div>
                     </div>
                   </div>
                   <div className="flex w-full md:w-auto self-justify-end justify-end shrink-0">
-                    <button className="inline-flex items-center justify-center gap-1 py-2 font-semibold md:font-medium rounded-lg transition-colors disabled:opacity-50 disabled:pointer-events-none px-3 bg-ant-primary hover:bg-ant-primary-h disabled:bg-ant-secondary-h text-white w-full md:w-auto ">
+                    <button className="inline-flex items-center justify-center gap-1 py-2 font-semibold md:font-medium rounded-lg transition-colors disabled:opacity-50 disabled:pointer-events-none px-3 bg-blue-800 hover:bg-blue-900 disabled:bg-gray-500 text-white w-full md:w-auto">
                       Upgrade API Keys
                     </button>
                   </div>
@@ -109,7 +116,10 @@ export default function ApiKeys() {
                   API Keys
                 </div>
                 <div className="my-4 text-right">
-                  <button className="inline-flex items-center justify-center gap-1 py-2 font-semibold md:font-medium rounded-lg transition-colors disabled:opacity-50 disabled:pointer-events-none px-3 bg-uivory-300 ring-1 ring-inset ring-stone-200 hover:bg-white">
+                  <button
+                    onClick={() => setIsModalVisible(true)}
+                    className="inline-flex items-center justify-center gap-1 py-2 font-semibold md:font-medium rounded-lg transition-colors disabled:opacity-50 disabled:pointer-events-none px-3 bg-uivory-300 ring-1 ring-inset ring-stone-200 hover:bg-white"
+                  >
                     Create Key
                   </button>
                 </div>
@@ -151,122 +161,40 @@ export default function ApiKeys() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-stone-200">
-                    <tr>
-                      <td className="whitespace-normal overflow-x-auto overflow-hidden sm:overflow-visible w-full max-w-0 py-4 pl-6 pr-3 text-sm sm:w-auto sm:max-w-none sm:pl-0">
-                        CLAUDE_SECRET
-                      </td>
-                      <td className="overflow-x-auto overflow-ellipsis whitespace-nowrap sm:overflow-visible sm:whitespace-normal w-full max-w-0 py-4 pl-6 pr-3 text-sm sm:w-auto sm:max-w-none sm:pl-0"></td>
-                      <td className="overflow-x-auto overflow-ellipsis whitespace-nowrap sm:overflow-visible sm:whitespace-normal px-3 py-3 text-sm text-stone-500 lg:table-cell">
-                        Apr 7, 2023
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-3 text-sm text-stone-500 lg:table-cell"></td>
-                      <td className="flex h-full items-center py-3 pr-6 sm:pr-0">
-                        <div className="grow w-0 h-0"></div>
-                        <div className="flex items-center">
-                          <button
-                            className="bg-ant-primary relative inline-flex h-6 w-11 items-center rounded-full"
-                            id="headlessui-switch-:rf:"
-                            role="switch"
-                            type="button"
-                            tabIndex={0}
-                            aria-checked="true"
-                            data-headlessui-state="checked"
-                          >
-                            <span className="sr-only">Enable key</span>
-                            <span className="translate-x-6 inline-block h-4 w-4 transform rounded-full bg-white transition"></span>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="whitespace-normal overflow-x-auto overflow-hidden sm:overflow-visible w-full max-w-0 py-4 pl-6 pr-3 text-sm sm:w-auto sm:max-w-none sm:pl-0">
-                        yckey
-                      </td>
-                      <td className="overflow-x-auto overflow-ellipsis whitespace-nowrap sm:overflow-visible sm:whitespace-normal w-full max-w-0 py-4 pl-6 pr-3 text-sm sm:w-auto sm:max-w-none sm:pl-0"></td>
-                      <td className="overflow-x-auto overflow-ellipsis whitespace-nowrap sm:overflow-visible sm:whitespace-normal px-3 py-3 text-sm text-stone-500 lg:table-cell">
-                        Apr 6, 2023
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-3 text-sm text-stone-500 lg:table-cell">
-                        May 19, 2023
-                      </td>
-                      <td className="flex h-full items-center py-3 pr-6 sm:pr-0">
-                        <div className="grow w-0 h-0"></div>
-                        <div className="flex items-center">
-                          <button
-                            className="bg-stone-300 relative inline-flex h-6 w-11 items-center rounded-full"
-                            id="headlessui-switch-:rg:"
-                            role="switch"
-                            type="button"
-                            tabIndex={0}
-                            aria-checked="false"
-                            data-headlessui-state=""
-                          >
-                            <span className="sr-only">Enable key</span>
-                            <span className="translate-x-1 inline-block h-4 w-4 transform rounded-full bg-white transition"></span>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="whitespace-normal overflow-x-auto overflow-hidden sm:overflow-visible w-full max-w-0 py-4 pl-6 pr-3 text-sm sm:w-auto sm:max-w-none sm:pl-0">
-                        shanur-secret
-                      </td>
-                      <td className="overflow-x-auto overflow-ellipsis whitespace-nowrap sm:overflow-visible sm:whitespace-normal w-full max-w-0 py-4 pl-6 pr-3 text-sm sm:w-auto sm:max-w-none sm:pl-0">
-                        sk-ant-api03-iTv...UQAA
-                      </td>
-                      <td className="overflow-x-auto overflow-ellipsis whitespace-nowrap sm:overflow-visible sm:whitespace-normal px-3 py-3 text-sm text-stone-500 lg:table-cell">
-                        May 26, 2023
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-3 text-sm text-stone-500 lg:table-cell"></td>
-                      <td className="flex h-full items-center py-3 pr-6 sm:pr-0">
-                        <div className="grow w-0 h-0"></div>
-                        <div className="flex items-center">
-                          <button
-                            className="bg-ant-primary relative inline-flex h-6 w-11 items-center rounded-full"
-                            id="headlessui-switch-:rh:"
-                            role="switch"
-                            type="button"
-                            tabIndex={0}
-                            aria-checked="true"
-                            data-headlessui-state="checked"
-                          >
-                            <span className="sr-only">Enable key</span>
-                            <span className="translate-x-6 inline-block h-4 w-4 transform rounded-full bg-white transition"></span>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="whitespace-normal overflow-x-auto overflow-hidden sm:overflow-visible w-full max-w-0 py-4 pl-6 pr-3 text-sm sm:w-auto sm:max-w-none sm:pl-0">
-                        llmskey
-                      </td>
-                      <td className="overflow-x-auto overflow-ellipsis whitespace-nowrap sm:overflow-visible sm:whitespace-normal w-full max-w-0 py-4 pl-6 pr-3 text-sm sm:w-auto sm:max-w-none sm:pl-0">
-                        sk-ant-api03-wY-...OAAA
-                      </td>
-                      <td className="overflow-x-auto overflow-ellipsis whitespace-nowrap sm:overflow-visible sm:whitespace-normal px-3 py-3 text-sm text-stone-500 lg:table-cell">
-                        May 19, 2023
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-3 text-sm text-stone-500 lg:table-cell">
-                        May 26, 2023
-                      </td>
-                      <td className="flex h-full items-center py-3 pr-6 sm:pr-0">
-                        <div className="grow w-0 h-0"></div>
-                        <div className="flex items-center">
-                          <button
-                            className="bg-stone-300 relative inline-flex h-6 w-11 items-center rounded-full"
-                            id="headlessui-switch-:ri:"
-                            role="switch"
-                            type="button"
-                            tabIndex={0}
-                            aria-checked="false"
-                            data-headlessui-state=""
-                          >
-                            <span className="sr-only">Enable key</span>
-                            <span className="translate-x-1 inline-block h-4 w-4 transform rounded-full bg-white transition"></span>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
+                    {tableData.map((row, index) => (
+                      <tr key={index}>
+                        <td className="whitespace-normal overflow-x-auto overflow-hidden sm:overflow-visible w-full max-w-0 py-4 pl-6 pr-3 text-sm sm:w-auto sm:max-w-none sm:pl-0">
+                          {row.key}
+                        </td>
+                        <td className="overflow-x-auto overflow-ellipsis whitespace-nowrap sm:overflow-visible sm:whitespace-normal w-full max-w-0 py-4 pl-6 pr-3 text-sm sm:w-auto sm:max-w-none sm:pl-0">
+                          {row.apiKey}
+                        </td>
+                        <td className="overflow-x-auto overflow-ellipsis whitespace-nowrap sm:overflow-visible sm:whitespace-normal px-3 py-3 text-sm text-stone-500 lg:table-cell">
+                          {row.startDate}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-3 text-sm text-stone-500 lg:table-cell">
+                          {row.endDate}
+                        </td>
+                        <td className="flex h-full items-center py-3 pr-6 sm:pr-0">
+                          <div className="grow w-0 h-0"></div>
+                          <div className="flex items-center">
+                            <button
+                              className="bg-stone-300 relative inline-flex h-6 w-11 items-center rounded-full"
+                              id={`headlessui-switch-${index}`}
+                              role="switch"
+                              type="button"
+                              tabIndex={0}
+                              aria-checked={row.enabled}
+                              data-headlessui-state=""
+                              onClick={() => switchApiState(row)}
+                            >
+                              <span className="sr-only">Enable key</span>
+                              <span className="translate-x-1 inline-block h-4 w-4 transform rounded-full bg-white transition"></span>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>

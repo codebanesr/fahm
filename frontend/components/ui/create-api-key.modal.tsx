@@ -1,16 +1,22 @@
 // Modal.js
-
 import { useState } from 'react';
 
 interface Props {
-  onSubmit: (name: string) => void;
+  onSubmit: (keyName: string) => Promise<void>;
+  onCancel: () => void;
 }
 
-export default function Modal({ onSubmit }: Props) {
-  const [name, setName] = useState('');
+export default function ApiKeyModal({ onSubmit, onCancel }: Props) {
+  const [keyName, setKeyName] = useState('');
 
-  const handleSubmit = () => {
-    onSubmit(name);
+  const handleCreateKey = () => {
+    onSubmit(keyName);
+    setKeyName('');
+  };
+
+  const handleCancel = () => {
+    setKeyName('');
+    onCancel();
   };
 
   return (
@@ -41,15 +47,23 @@ export default function Modal({ onSubmit }: Props) {
                     placeholder="shanur-rahman-secret-key"
                     className="box-border overflow-hidden whitespace-pre-wrap p-2 text-sm leading-5 font-sans text-stone-600 placeholder:text-stone-400 border-stone-200 border-[.1rem] w-full h-[2.5rem] absolute top-0 resize-none transition-colors transition-transform rounded focus:border-blue-500 focus:ring-blue-500 disabled:bg-stone-50"
                     tabIndex={0}
+                    value={keyName}
+                    onChange={(e) => setKeyName(e.target.value)}
                   ></textarea>
                 </div>
               </div>
             </div>
             <div className="mt-4 gap-2 flex flex-row-reverse">
-              <button className="inline-flex items-center justify-center gap-1 py-2 px-3 text-sm font-semibold md:font-medium rounded-lg transition-colors bg-uivory-300 ring-1 ring-inset ring-stone-200 hover:bg-white">
+              <button
+                className="inline-flex items-center justify-center gap-1 py-2 px-3 text-sm font-semibold md:font-medium rounded-lg transition-colors bg-uivory-300 ring-1 ring-inset ring-stone-200 hover:bg-white"
+                onClick={handleCreateKey}
+              >
                 Create Key
               </button>
-              <button className="inline-flex items-center justify-center gap-1 py-2 px-3 text-sm font-semibold md:font-medium rounded-lg transition-colors bg-uivory-300 ring-1 ring-inset ring-stone-200 hover:bg-white">
+              <button
+                className="inline-flex items-center justify-center gap-1 py-2 px-3 text-sm font-semibold md:font-medium rounded-lg transition-colors bg-uivory-300 ring-1 ring-inset ring-stone-200 hover:bg-white"
+                onClick={handleCancel}
+              >
                 Cancel
               </button>
             </div>

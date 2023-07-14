@@ -10,22 +10,17 @@ export default function ApiKeys() {
 
   const [tableData, setTableData] = useState<ApiKey[]>([]);
 
+  const { user, isLoading } = useUser();
   useEffect(() => {
     async function fetchData() {
-      try {
-        const data = await performAPICall(`chat/keys/${email}`, 'GET');
-        if (data) {
-          console.log({ data });
-          setTableData(data);
-        }
-      } catch (error) {
-        console.error(error);
-        // Handle the error or show an error message to the user
+      const data = await performAPICall(`chat/keys/${user?.email}`, 'GET');
+      if (data) {
+        setTableData(data);
       }
     }
 
     fetchData();
-  }, []);
+  }, [user, isLoading]);
 
   const onModalCancel = () => {
     setIsModalVisible(false);
@@ -41,11 +36,10 @@ export default function ApiKeys() {
     );
   }
 
-  const email = useUser().user?.email;
   async function handleCreate(keyName: string): Promise<void> {
     const row = await performAPICall('chat/key', 'POST', {
       keyName,
-      username: email,
+      username: user?.email,
     });
     if (row) {
       setTableData((prevTableData) => [...prevTableData, row]);
@@ -184,19 +178,18 @@ export default function ApiKeys() {
                         <td className="flex h-full items-center py-3 pr-6 sm:pr-0">
                           <div className="grow w-0 h-0"></div>
                           <div className="flex items-center">
-                            <button
-                              className="bg-stone-300 relative inline-flex h-6 w-11 items-center rounded-full"
-                              id={`headlessui-switch-${index}`}
-                              role="switch"
-                              type="button"
-                              tabIndex={0}
-                              aria-checked={row.enabled}
-                              data-headlessui-state=""
-                              onClick={() => switchApiState(row)}
-                            >
-                              <span className="sr-only">Enable key</span>
-                              <span className="translate-x-1 inline-block h-4 w-4 transform rounded-full bg-white transition"></span>
-                            </button>
+                            <div className="relative inline-block w-10 mr-2 align-middle select-none">
+                              <input
+                                type="checkbox"
+                                className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
+                                checked={row.enabled}
+                                onChange={() => switchApiState(row)}
+                              />
+                              <label
+                                htmlFor="toggle"
+                                className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"
+                              ></label>
+                            </div>
                           </div>
                         </td>
                       </tr>

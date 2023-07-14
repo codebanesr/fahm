@@ -1,5 +1,7 @@
 import { html, css, LitElement } from 'lit';
 import { property, state } from 'lit/decorators.js';
+import { makeChatRequest } from './api/chat';
+import { fileUploadHelper } from './api/upload';
 
 export class FahmChat extends LitElement {
   static styles = css`
@@ -214,63 +216,83 @@ export class FahmChat extends LitElement {
 
   static properties = {
     endpoint: { type: String },
+    apikey: { type: String },
   };
 
-  @state() messages = [
-    {
-      type: 'apiMessage',
-      message: 'Hi! How can I help you?',
-    },
-  ];
+  @state() messages: { type: string; message: string }[] = [];
   @state() inputMessage = '';
 
-  callEndpoint() {
-    // Perform the API call to the provided endpoint
-    fetch(this.endpoint)
-      .then((response) => response.json())
-      .then((data) => {
-        // Handle the response data
-        console.log(data);
-      })
-      .catch((error) => {
-        // Handle any errors
-        console.error(error);
-      });
+  async makeChatRequest() {
+    const data = await makeChatRequest(
+      this.inputMessage,
+      this.messages,
+      this.endpoint,
+    );
+    this.messages = [
+      ...this.messages,
+      { message: data!.text, type: 'Assistant' },
+    ];
   }
 
   handleKeyPress(event: any) {
     this.inputMessage = event.target.value;
-    
+
     if (event.key === 'Enter') {
       this.sendMessage();
     }
   }
 
-  sendMessage() {
+  async sendMessage() {
     if (this.inputMessage.trim() === '') {
       return;
     }
 
     const newMessage = {
-      type: 'userMessage',
+      type: 'Human',
       message: this.inputMessage,
       isStreaming: false,
       sourceDocs: [],
     };
 
     this.messages = [...this.messages, newMessage];
+
+    await this.makeChatRequest();
     this.inputMessage = '';
   }
 
-  // @input=${(event: any) => this.handleInput(event)}
+  async handleFileUpload(e: Event) {
+    try {
+      const data = await fileUploadHelper(e, '/upload');
+      this.dispatchEvent(
+        new CustomEvent('fileUploadSuccess', {
+          detail: {
+            data,
+          },
+        }),
+      );
+    } catch (e) {
+      this.dispatchEvent(
+        new CustomEvent('fileUploadFailed', {
+          detail: {
+            error: e,
+          },
+        }),
+      );
+    }
+  }
 
-  @property({ type: String }) endpoint = 'https://example.com';
+  @property({ type: String }) endpoint = 'http://localhost:8080/_api/chat';
+  @property({ type: String }) apikey = 'yoursecretapikey';
+  @property() showFileUpload = true;
   render() {
     return html`
       <div class="flex flex-col h-screen">
         <div class="flex-grow">
           <!-- Chat messages -->
           <div class="flex flex-col space-y-4 p-4">
+          ${this.showFileUpload
+            ? html` <input type="file" @change=${this.handleFileUpload} /> `
+            : ''}
             ${this.messages.map(
               (message, index) => html`
                 <div key=${index} class="flex flex-col space-y-2">

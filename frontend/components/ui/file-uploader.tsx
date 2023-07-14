@@ -57,7 +57,7 @@ export default function FileUploader() {
 
     const formData = new FormData();
     formData.append('file', uploadedFiles[0]);
-    formData.append('email', email);
+    formData.append('identifier', email);
 
     try {
       setUploading(true);

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { PDFLoader } from 'langchain/document_loaders/fs/pdf';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import {
@@ -6,12 +6,18 @@ import {
   VectorDBClient,
 } from 'src/db-utils/vector-db-client.interface';
 import { FileService } from './file.service';
+import { InjectModel } from '@nestjs/mongoose';
+import { ApiKey } from 'src/chat/schema/api-key.schema';
+import { Model } from 'mongoose';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class DocumentIngestionService {
   constructor(
     @Inject('VECTOR_DB_CLIENT') private readonly vectorDbClient: VectorDBClient,
     private readonly fileService: FileService,
+    private readonly usersService: UsersService,
+    @InjectModel(ApiKey.name) private apiKeyModel: Model<ApiKey>,
   ) {}
 
   stringToBase64(input: string): string {
@@ -19,8 +25,9 @@ export class DocumentIngestionService {
     return buffer.toString('base64');
   }
 
-  async getAllUploadedFiles(email: string) {
-    return this.fileService.findAll({ email });
+  async getAllUploadedFiles(identifier: string) {
+    const result = await this.fileService.findAll({ identifier });
+    return result;
   }
 
   async removeDocumentsByFilter(
@@ -35,9 +42,39 @@ export class DocumentIngestionService {
     });
   }
 
-  async ingestUserDocuments(file: Express.Multer.File, email?: string) {
-    const search_context = email
-      ? this.stringToBase64(email)
+  async removeDocumentsByApiKey(apiKey: string) {
+    // delete all files that were uploaded using this api key
+    await this.fileService.removeFilesForApiKey(apiKey);
+    return this.vectorDbClient.removeDocumentsByFilter({
+      filter: { apiKey },
+      indexName: process.env.PINECONE_INDEX_NAME,
+      namespace: process.env.PINECONE_NS,
+    });
+  }
+
+  async ingestUserDocuments(file: Express.Multer.File, identifier?: string) {
+    if (!identifier) {
+      throw new BadRequestException(
+        'Master Directory has currently been disabled, you should be either logged in or using an api key to access this resource',
+      );
+    }
+
+    const exists = await this.apiKeyModel.exists({ key: identifier });
+    if (!exists?._id) {
+      // if user is using the playground, he doesn't need an api key.
+      // In this case we only verify if the user is registered.
+      const result = await this.usersService.checkEmailExists(identifier);
+
+      console.log({ result });
+      if (!result) {
+        throw new BadRequestException(
+          'This api key is not valid, please create one from the dashboard',
+        );
+      }
+    }
+
+    const search_context = identifier
+      ? this.stringToBase64(identifier)
       : this.stringToBase64('master_dir');
 
     const file_base64 = this.stringToBase64(file.filename);
@@ -52,6 +89,7 @@ export class DocumentIngestionService {
     const docs = await textSplitter.splitDocuments(rawDocs);
     docs.forEach((doc) => {
       doc.metadata.search_context = search_context;
+      doc.metadata.apiKey = identifier;
       doc.metadata.file_base64 = file_base64;
     });
 
@@ -71,7 +109,7 @@ export class DocumentIngestionService {
     });
 
     return this.fileService.create({
-      email,
+      identifier,
       originalName: file.originalname,
       filePath: file.path,
       file_base64,

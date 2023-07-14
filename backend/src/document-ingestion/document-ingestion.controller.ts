@@ -19,9 +19,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { DocumentIngestionDto } from 'src/completion/dto';
-import { DocumentIngestionService } from './document-ingestion.service';
-import { RemoveDocumentsDto } from './dto/remove-documents.dto';
 import { VectorDBClient } from 'src/db-utils/vector-db-client.interface';
+import { DocumentIngestionService } from './document-ingestion.service';
+import { FileResponseDto } from './dto/file-response.dto';
+import { RemoveDocumentsDto } from './dto/remove-documents.dto';
+import { SuccessResponseDto } from './dto/success-response.dto';
 
 @ApiTags('document-ingestion')
 @Controller('document-ingestion')
@@ -45,10 +47,16 @@ export class DocumentIngestionController {
     @UploadedFile() file: Express.Multer.File,
     @Body() body: DocumentIngestionDto,
   ) {
-    return this.documentIngestionService.ingestUserDocuments(file, body.email);
+    return this.documentIngestionService.ingestUserDocuments(
+      file,
+      body.identifier,
+    );
   }
 
-  @ApiOperation({ summary: 'Remove documents by filter' })
+  @ApiOperation({
+    summary:
+      "Remove a document by it's encoded value, this encoded value will be present in the response to uploads/:email",
+  })
   @ApiBadRequestResponse({ description: 'Bad request' })
   @ApiOkResponse({ description: 'Documents removed successfully' })
   @Delete('/remove/:file_base64')
@@ -61,11 +69,18 @@ export class DocumentIngestionController {
         file_base64,
         removeDocumentsDto,
       );
-    } catch (error) {
-      // Handle and return appropriate error response
-    }
+    } catch (error) {}
   }
 
+  @ApiOperation({
+    summary: 'Delete all documents from index',
+    description: 'Deletes all documents from the specified Pinecone index',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Success message',
+    type: SuccessResponseDto,
+  })
   @Delete('/remove/docs/all')
   async deleteAllDocs() {
     await this.vectorDbClient.deleteAllFromIndex(
@@ -75,8 +90,18 @@ export class DocumentIngestionController {
     return { status: 'ok', done: true };
   }
 
-  @Get('uploads/:email')
-  async getAllUploadedFiles(@Param('email') email: string) {
-    return this.documentIngestionService.getAllUploadedFiles(email);
+  @ApiOperation({
+    summary: 'Get all uploaded files for a user',
+    description:
+      'Returns a list of all the files uploaded for a specific user identified by their API key or email',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Array of uploaded files',
+    type: [FileResponseDto],
+  })
+  @Get('uploads/:identifier')
+  async getAllUploadedFiles(@Param('identifier') identifier: string) {
+    return this.documentIngestionService.getAllUploadedFiles(identifier);
   }
 }

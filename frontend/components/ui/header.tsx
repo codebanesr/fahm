@@ -14,7 +14,7 @@ const Header = () => {
   };
 
   function handleApiKeys(): void {
-    router.push('api-key-management')
+    router.push('api-key-management');
   }
 
   return (
@@ -41,17 +41,16 @@ const Header = () => {
             <a
               href="javascript:void(0)"
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-              onClick={handleLogout}
-            >
-              Logout
-            </a>
-
-            <a
-              href="javascript:void(0)"
-              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               onClick={handleApiKeys}
             >
               Api Keys
+            </a>
+            <a
+              href="javascript:void(0)"
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              onClick={handleLogout}
+            >
+              Logout
             </a>
           </div>
         )}

@@ -2,14 +2,28 @@
 import { Session, handleAuth, handleCallback } from '@auth0/nextjs-auth0';
 import { NextApiRequest, NextApiResponse } from 'next';
 
-const afterCallback = (
+async function upsertUser(url: string, user: any) {
+  const headers = {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  };
+  const body = JSON.stringify(user);
+  const response = await fetch(url, {
+    method: 'PUT',
+    headers: headers,
+    body: body,
+  });
+  return response.json();
+}
+
+const afterCallback = async (
   req: NextApiRequest,
   res: NextApiResponse,
   session: Session,
 ) => {
   const user = session.user || (<any>req).user;
-  if(user) {
-    
+  if (user) {
+    await upsertUser(`${process.env.API_URL}/users`, user);
   }
   return session;
 };

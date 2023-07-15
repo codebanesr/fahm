@@ -185,25 +185,17 @@ export default function ApiKeys() {
                         <td className="whitespace-nowrap px-3 py-3 text-sm text-stone-500 lg:table-cell">
                           {row.endDate}
                         </td>
-                        <td className="flex h-full items-center py-3 pr-6 sm:pr-0">
-                          <div className="grow w-0 h-0"></div>
-                          <div className="flex items-center">
-                            <div className="relative inline-block w-10 mr-2 align-middle select-none">
-                              <div className="relative inline-block w-10 mr-2 align-middle select-none">
-                                <input
-                                  type="checkbox"
-                                  className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
-                                  checked={true}
-                                  onChange={() => switchApiState(row)}
-                                  id="toggle"
-                                />
-                                <label
-                                  htmlFor="toggle"
-                                  className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"
-                                ></label>
-                              </div>
-                            </div>
-                          </div>
+                        <td className="flex h-full items-center justify-center align-middle py-3 pr-6 sm:pr-0">
+                          <input
+                            checked={row.enabled}
+                            id="checked-checkbox"
+                            type="checkbox"
+                            value=""
+                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                            onChange={(e) => {
+                              switchApiState(row);
+                            }}
+                          />
                         </td>
                       </tr>
                     ))}

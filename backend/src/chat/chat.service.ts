@@ -62,7 +62,7 @@ export class ChatService implements OnModuleInit {
     });
 
     const now = new Date();
-    await this.apiKeyModel.create({
+    const result = await this.apiKeyModel.create({
       apiKey,
       key: keyName,
       usageCount: 0,
@@ -73,7 +73,8 @@ export class ChatService implements OnModuleInit {
       userId: username,
     });
 
-    return this.apiKeyModel.find({ userId: username });
+    console.log({ result });
+    return result;
   }
 
   async deleteApiKey(key: string) {

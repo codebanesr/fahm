@@ -3,7 +3,7 @@ import Header from '@/components/ui/header';
 import { ApiKey } from '@/types/api-key';
 import { performAPICall } from '@/utils/perform-api-call';
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 export default function ApiKeys() {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -11,16 +11,26 @@ export default function ApiKeys() {
   const [tableData, setTableData] = useState<ApiKey[]>([]);
 
   const { user, isLoading } = useUser();
+  const cachedUser = useMemo(() => user, [user]);
+
   useEffect(() => {
     async function fetchData() {
-      const data = await performAPICall(`chat/keys/${user?.email}`, 'GET');
-      if (data) {
-        setTableData(data);
+      if (cachedUser?.email) {
+        // Check if user.email is defined
+        const data = await performAPICall(
+          `chat/keys/${cachedUser.email}`,
+          'GET',
+        );
+        if (data) {
+          setTableData(data);
+        }
       }
     }
 
-    fetchData();
-  }, [user, isLoading]);
+    if (!isLoading) {
+      fetchData();
+    }
+  }, [isLoading, cachedUser]);
 
   const onModalCancel = () => {
     setIsModalVisible(false);
@@ -54,7 +64,7 @@ export default function ApiKeys() {
       )}
       <main className="flex flex-grow min-h-0 w-full overflow-auto">
         <div className="flex-grow w-full overflow-scroll">
-          <div className="flex flex-col p-6 max-w-4xl mx-auto h-full">
+          <div className="flex flex-col p-6 max-w-6xl mx-auto h-full">
             <div
               className="flex rounded-2xl bg-stone-100 border border-stone-200 py-6 px-6 mb-12 items-center"
               role="alert"
@@ -110,7 +120,7 @@ export default function ApiKeys() {
                 </div>
               </div>
             </div>
-            <div className="">
+            <div>
               <div className="flex flex-row justify-between items-center">
                 <div className="py-4 font-medium text-stone-800 text-2xl">
                   API Keys
@@ -179,16 +189,19 @@ export default function ApiKeys() {
                           <div className="grow w-0 h-0"></div>
                           <div className="flex items-center">
                             <div className="relative inline-block w-10 mr-2 align-middle select-none">
-                              <input
-                                type="checkbox"
-                                className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
-                                checked={row.enabled}
-                                onChange={() => switchApiState(row)}
-                              />
-                              <label
-                                htmlFor="toggle"
-                                className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"
-                              ></label>
+                              <div className="relative inline-block w-10 mr-2 align-middle select-none">
+                                <input
+                                  type="checkbox"
+                                  className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
+                                  checked={true}
+                                  onChange={() => switchApiState(row)}
+                                  id="toggle"
+                                />
+                                <label
+                                  htmlFor="toggle"
+                                  className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"
+                                ></label>
+                              </div>
                             </div>
                           </div>
                         </td>
